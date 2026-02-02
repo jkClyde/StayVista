@@ -1,3 +1,5 @@
+export const runtime = 'nodejs';
+
 import PropertyHeaderImage from '@/components/PropertyHeaderImage';
 import PropertyDetails from '@/components/PropertyDetails';
 import connectDB from '@/config/database';
@@ -12,16 +14,41 @@ import { FaArrowLeft } from 'react-icons/fa';
 
 const PropertyPage = async ({ params }) => {
   await connectDB();
-  const propertyDoc = await Property.findById(params.id).lean();
-  const property = convertToSerializeableObject(propertyDoc);
-
-  if (!property) {
+  
+  // Await params in Next.js 15
+  const resolvedParams = await params;
+  const propertyId = resolvedParams.id;
+  
+  
+  if (!propertyId || !propertyId.match(/^[0-9a-fA-F]{24}$/)) {
+    console.log('Invalid MongoDB ID format');
     return (
-      <h1 className='text-center text-2xl font-bold mt-10'>
-        Property Not Found
-      </h1>
+      <div className='text-center mt-10'>
+        <h1 className='text-2xl font-bold'>Invalid Property ID</h1>
+        <Link href='/properties' className='text-blue-500 hover:text-blue-600 mt-4 inline-block'>
+          <FaArrowLeft className='inline mr-2' /> Back to Properties
+        </Link>
+      </div>
     );
   }
+  
+  const propertyDoc = await Property.findById(propertyId).lean();
+  
+  console.log('Property found:', propertyDoc ? 'Yes' : 'No');
+  
+  if (!propertyDoc) { 
+    return (
+      <div className='text-center mt-10'>
+        <h1 className='text-2xl font-bold mb-4'>Property Not Found</h1>
+        <p className='text-gray-600 mb-4'>The property you're looking for doesn't exist.</p>
+        <Link href='/properties' className='text-blue-500 hover:text-blue-600'>
+          <FaArrowLeft className='inline mr-2' /> Back to Properties
+        </Link>
+      </div>
+    );
+  }
+
+  const property = convertToSerializeableObject(propertyDoc);
 
   return (
     <>
