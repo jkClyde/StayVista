@@ -6,9 +6,12 @@ import FeaturedProperties from '@/components/FeaturedProperties';
 const HomePage = () => {
   return (
     <>
-      <InfoBoxes />
-      <FeaturedProperties />
-      <HomeProperties />
+      <div className="pt-[100px]">
+        <InfoBoxes />
+        <FeaturedProperties />
+        <HomeProperties />
+      </div>
+
     </>
   );
 };

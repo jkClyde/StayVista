@@ -1,4 +1,3 @@
-// import PropertySearchForm from './PropertySearchForm';
 'use client'
 
 import { useGSAP } from "@gsap/react";
@@ -39,18 +38,23 @@ const Hero = () => {
   }, [])
 
   return (
-    <section className='flex justify-center items-center  md:min-h-[500px] py-[100px] md:py-[25px] '>
+    <section className='relative flex justify-center items-center md:min-h-[500px] py-[100px] md:py-[25px] pb-[150px] md:pb-[100px]'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center'>
         <div className='text-center'>
           <h1 className='hero-title text-4xl font-extrabold text-white sm:text-5xl md:text-6xl '>
             Find Your Perfect Stay
-
           </h1>
           <p className='hero-subtitle my-4 text-[16px] md:text-[24px] text-white'>
             Experience comfort and convenience at its finest.
           </p>
         </div>
-        <PropertySearchForm />
+
+        {/* Search form positioned at bottom, 50% outside */}
+        <div className='absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-auto'>
+          <div className="bg-white p-6 shadow-lg rounded-lg">
+            <PropertySearchForm />
+          </div>
+        </div>
       </div>
     </section>
   );

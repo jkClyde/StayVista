@@ -7,7 +7,7 @@ const Footer = () => {
 
   return (
     <footer className='bg-[#1A1E43] pt-[50px] pb-[25px]  text-white '>
-      <div className='mx-auto max-w-[1620px] flex flex-col lg:flex-row lg:items-start items-center justify-between px-4 gap-[35px] md:gap-[50px] lg:-gap-[100px]'>
+      <div className='mx-auto max-w-[1620px] flex flex-col lg:flex-row lg:items-start items-center justify-between px-4 gap-[35px] md:gap-[100px]'>
         {/* Branding */}
         <div className='flex flex-col gap-[25px]'>
           <Link className='flex flex-shrink-0 items-center' href='/'>
