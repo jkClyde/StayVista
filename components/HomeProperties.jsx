@@ -1,0 +1,45 @@
+import Link from "next/link";
+import connectDB from "@/config/database";
+import PropertyCard from "./PropertyCard";
+import Property from "@/models/Property";
+
+
+const HomeProperties = async () => {
+  await connectDB();
+  const recentProperties = await Property.find({}).sort({ createdAt: -1 }).limit(3).lean();
+
+  return (
+    <>
+      <section className='px-4 py-6 mt-[25px]'>
+        <div className='container-xl lg:container m-auto'>
+          <h2 className='text-3xl font-bold text-[#23274A] mb-6 text-left'>
+            Recent Listings
+          </h2>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+            {recentProperties.length === 0 ? (
+              <p>No Properties Found</p>
+            ) : (
+              recentProperties.map((property) => (
+                <PropertyCard key={property._id} property={property} />
+              ))
+            )}
+          </div>
+        </div>
+      </section>
+
+      <section className='m-auto max-w-lg my-10 px-6'>
+        <Link
+          href='/properties'
+          className='block bg-[#23274A] text-white text-center py-4 px-6 rounded-xl hover:bg-gray-700'
+        >
+          View All Properties
+        </Link>
+      </section>
+
+
+    </>
+  );
+};
+
+export default HomeProperties;
+
