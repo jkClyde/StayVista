@@ -6,7 +6,7 @@ import FeaturedProperties from '@/components/FeaturedProperties';
 const HomePage = () => {
   return (
     <>
-      <div className="pt-[100px]">
+      <div className="md:pt-[120px]">
         <InfoBoxes />
         <FeaturedProperties />
         <HomeProperties />

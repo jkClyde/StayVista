@@ -38,22 +38,20 @@ const Hero = () => {
   }, [])
 
   return (
-    <section className='relative flex justify-center items-center md:min-h-[500px] py-[100px] md:py-[25px] pb-[150px] md:pb-[100px]'>
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center'>
+    <section className='relative flex justify-center items-center lg:min-h-[500px] py-[100px] lg:py-[25px] pb-[25px] lg:pb-[100px]'>
+      <div className='w-full lg:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center'>
         <div className='text-center'>
-          <h1 className='hero-title text-4xl font-extrabold text-white sm:text-5xl md:text-6xl '>
+          <h1 className='hero-title text-4xl font-extrabold text-white sm:text-5xl lg:text-6xl '>
             Find Your Perfect Stay
           </h1>
-          <p className='hero-subtitle my-4 text-[16px] md:text-[24px] text-white'>
+          <p className='hero-subtitle my-4 text-[16px] lg:text-[24px] text-white'>
             Experience comfort and convenience at its finest.
           </p>
         </div>
 
         {/* Search form positioned at bottom, 50% outside */}
-        <div className='absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-auto'>
-          <div className="bg-white p-6 shadow-lg rounded-lg">
-            <PropertySearchForm />
-          </div>
+        <div className='w-full lg:absolute lg:bottom-0 lg:left-1/2 lg:-translate-x-1/2 lg:translate-y-1/2  lg:w-[95vw] max-w-[100%] lg:max-w-7xl px-4 mt-[15px] lg:mt-0'>
+          <PropertySearchForm />
         </div>
       </div>
     </section>

@@ -10,7 +10,7 @@ const HomeProperties = async () => {
 
   return (
     <>
-      <section className='px-4 py-6 mt-[25px]'>
+      <section className='px-4 py-6 my-[25px]'>
         <div className='container-xl lg:container m-auto'>
           <h2 className='text-3xl font-bold text-[#23274A] mb-6 text-left'>
             Recent Listings
@@ -27,14 +27,14 @@ const HomeProperties = async () => {
         </div>
       </section>
 
-      <section className='m-auto max-w-lg my-10 px-6'>
+      {/* <section className='m-auto max-w-lg my-10 px-6'>
         <Link
           href='/properties'
           className='block bg-[#23274A] text-white text-center py-4 px-6 rounded-xl hover:bg-gray-700'
         >
           View All Properties
         </Link>
-      </section>
+      </section> */}
 
 
     </>
