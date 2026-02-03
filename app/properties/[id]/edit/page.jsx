@@ -4,12 +4,13 @@ import Property from '@/models/Property';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 
 const PropertyEditPage = async ({ params }) => {
+  const { id } = await params; // ✅ unwrap params
+
   await connectDB();
 
-  const propertyDoc = await Property.findById(params.id).lean();
-  const property = convertToSerializeableObject(propertyDoc);
+  const propertyDoc = await Property.findById(id).lean(); // ✅ use id
 
-  if (!property) {
+  if (!propertyDoc) {
     return (
       <h1 className='text-center text-2xl font-bold mt-10'>
         Property Not Found
@@ -17,9 +18,11 @@ const PropertyEditPage = async ({ params }) => {
     );
   }
 
+  const property = convertToSerializeableObject(propertyDoc); 
+
   return (
     <section className='bg-blue-50'>
-      <div className='container m-auto max-w-2xl py-24'>
+      <div className='container m-auto max-w-[1200px] py-24'>
         <div className='bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0'>
           <PropertyEditForm property={property} />
         </div>
