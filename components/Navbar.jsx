@@ -116,28 +116,10 @@ const Navbar = () => {
 
           {/* <!-- Right Side Menu (Logged Out) --> */}
 
-          {/* For Mobile */}
-          {!session && (
-            <div className='block md:hidden md:ml-6'>
-              <div className='flex items-center'>
-                {providers &&
-                  Object.values(providers).map((provider) => (
-                    <button
-                      key={provider.name}
-                      onClick={() => signIn(provider.id)}
-                      className='flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 my-3'
-                    >
-                      <FaGoogle className='text-white mr-2' />
-                      <span>Login or Register</span>
-                    </button>
-                  ))}
-              </div>
-            </div>
-          )}
-
+    
 
           {!session && (
-            <div className='hidden md:block md:ml-6'>
+            <div className='block md:ml-6'>
               <div className='flex items-center'>
                 {providers &&
                   Object.values(providers).map((provider) => (
@@ -262,13 +244,15 @@ const Navbar = () => {
 
 
       {/* <!-- Mobile menu, show/hide based on menu state. --> */}
+      {/* <!-- Mobile menu, show/hide based on menu state. --> */}
       {isMobileMenuOpen && (
-        <div id='mobile-menu'>
+        <div id='mobile-menu' className='absolute top-full left-0 right-0 bg-[#1A1E43] w-full'>
           <div className='space-y-1 px-2 pb-3 pt-2'>
             <Link
               href='/'
               className={`${pathname === '/' ? 'bg-black' : ''
                 } text-white block rounded-md px-3 py-2 text-base font-medium`}
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               Home
             </Link>
@@ -276,6 +260,7 @@ const Navbar = () => {
               href='/properties'
               className={`${pathname === '/properties' ? 'bg-black' : ''
                 } text-white block rounded-md px-3 py-2 text-base font-medium`}
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               Properties
             </Link>
@@ -284,27 +269,11 @@ const Navbar = () => {
                 href='/properties/add'
                 className={`${pathname === '/properties/add' ? 'bg-black' : ''
                   } text-white block rounded-md px-3 py-2 text-base font-medium`}
+                onClick={() => setIsMobileMenuOpen(false)}
               >
                 Add Property
               </Link>
             )}
-            {/* {!session && (
-              <div className='block md:ml-6'>
-                <div className='flex items-center'>
-                  {providers &&
-                    Object.values(providers).map((provider) => (
-                      <button
-                        key={provider.name}
-                        onClick={() => signIn(provider.id)}
-                        className='flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 my-3'
-                      >
-                        <FaGoogle className='text-white mr-2' />
-                        <span>Login or Register</span>
-                      </button>
-                    ))}
-                </div>
-              </div>
-            )} */}
           </div>
         </div>
       )}
