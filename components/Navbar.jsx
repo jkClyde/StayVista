@@ -36,7 +36,7 @@ const Navbar = () => {
   return (
     <nav className="bg-[#1A1E43]/80 ">
       <div className='mx-auto max-w-[1620px] px-2 sm:px-6 lg:px-[5%]'>
-        <div className='relative flex h-20 items-center justify-between'>
+        <div className='relative flex h-[50px] md:h-20 items-center justify-between'>
           <div className='absolute inset-y-0 left-0 flex items-center md:hidden'>
             {/* <!-- Mobile menu button--> */}
             <button
@@ -68,7 +68,7 @@ const Navbar = () => {
 
           <div className='flex flex-1 items-center justify-center md:items-stretch md:justify-start'>
             {/* <!-- Logo --> */}
-            <Link className='flex flex-shrink-0 items-center' href='/'>
+            <Link className='hidden md:flex flex-shrink-0 items-center' href='/'>
               <Image className='h-10 w-auto' src={logo} alt='PropertyPulse' />
 
               <span className='hidden md:block text-white text-2xl font-bold ml-2'>
