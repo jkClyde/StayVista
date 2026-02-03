@@ -44,7 +44,7 @@ const Hero = () => {
           <h1 className='hero-title text-4xl font-extrabold text-white sm:text-5xl lg:text-6xl '>
             Find Your Perfect Stay
           </h1>
-          <p className='hero-subtitle my-4 text-[16px] lg:text-[24px] text-white'>
+          <p className='hero-subtitle my-4 text-[20px] lg:text-[24px] text-white'>
             Experience comfort and convenience at its finest.
           </p>
         </div>
