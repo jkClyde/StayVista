@@ -27,7 +27,7 @@ const PropertyPage = async ({ params }) => {
       return (
         <div className='text-center mt-10 px-4'>
           <h1 className='text-2xl font-bold'>Invalid Property ID</h1>
-          <Link href='/properties' className='text-blue-500 hover:text-blue-600 mt-4 inline-block'>
+          <Link href='/properties' className='text-[#1A1E43] hover:text-[#303879] mt-4 inline-block'>
             <FaArrowLeft className='inline mr-2' /> Back to Properties
           </Link>
         </div>
@@ -45,7 +45,7 @@ const PropertyPage = async ({ params }) => {
         <div className='text-center mt-10 px-4'>
           <h1 className='text-2xl font-bold mb-4'>Property Not Found</h1>
           <p className='text-gray-600 mb-4'>The property you're looking for doesn't exist.</p>
-          <Link href='/properties' className='text-blue-500 hover:text-blue-600'>
+          <Link href='/properties' className='text-[#1A1E43] hover:text-[#303879]'>
             <FaArrowLeft className='inline mr-2' /> Back to Properties
           </Link>
         </div>
@@ -66,7 +66,7 @@ const PropertyPage = async ({ params }) => {
           <div className='container m-auto py-6 px-6'>
             <Link
               href='/properties'
-              className='text-blue-500 hover:text-blue-600 flex items-center'
+              className='text-[#1A1E43] hover:text-[#303879] flex items-center'
             >
               <FaArrowLeft className='mr-2' /> Back to Properties
             </Link>
@@ -98,7 +98,7 @@ const PropertyPage = async ({ params }) => {
         <h1 className='text-2xl font-bold mb-4'>Error Loading Property</h1>
         <p className='text-gray-600 mb-4'>An error occurred while loading this property.</p>
         <p className='text-sm text-gray-500 mb-4'>{error.message}</p>
-        <Link href='/properties' className='text-blue-500 hover:text-blue-600'>
+        <Link href='/properties' className='text-[#1A1E43] hover:text-[#303879]'>
           <FaArrowLeft className='inline mr-2' /> Back to Properties
         </Link>
       </div>
