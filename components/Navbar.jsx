@@ -34,7 +34,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="bg-[#1A1E43]/80 ">
+    <nav className="bg-[#1A1E43] backdrop-blur-md sticky top-0 z-50">
       <div className='mx-auto max-w-[1620px] px-2 sm:px-6 lg:px-[5%]'>
         <div className='relative flex h-[50px] md:h-20 items-center justify-between'>
           <div className='absolute inset-y-0 left-0 flex items-center md:hidden'>
@@ -235,6 +235,7 @@ const Navbar = () => {
           )}
         </div>
       </div>
+      
       {/* <!-- Mobile menu, show/hide based on menu state. --> */}
       {isMobileMenuOpen && (
         <div id='mobile-menu'>

@@ -50,7 +50,7 @@ const Hero = () => {
         </div>
 
         {/* Search form positioned at bottom, 50% outside */}
-        <div className='w-full lg:absolute lg:bottom-0 lg:left-1/2 lg:-translate-x-1/2 lg:translate-y-1/2  lg:w-[95vw] max-w-[100%] lg:max-w-7xl px-4 mt-[15px] lg:mt-0'>
+        <div className='w-full lg:absolute lg:bottom-0 lg:left-1/2 lg:-translate-x-1/2 lg:translate-y-1/2  lg:w-[95vw] max-w-[100%] lg:max-w-7xl  mt-[15px] lg:mt-0'>
           <PropertySearchForm />
         </div>
       </div>
