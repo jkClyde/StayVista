@@ -5,7 +5,7 @@ const PropertyFilters = () => {
     <aside className='hidden lg:block w-80 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto'>
       <div className='p-6 space-y-6'>
         {/* Map View */}
-        <div className='border border-gray-300 rounded-lg overflow-hidden'>
+        {/* <div className='border border-gray-300 rounded-lg overflow-hidden'>
           <div className='relative h-48 bg-gray-200'>
             <div className='absolute inset-0 flex items-center justify-center'>
               <FaMapMarkedAlt className='text-6xl text-gray-400' />
@@ -15,10 +15,10 @@ const PropertyFilters = () => {
               View on Map
             </button>
           </div>
-        </div>
+        </div> */}
 
         {/* Display Total Price Toggle */}
-        <div className='border-b border-gray-200 pb-4'>
+        {/* <div className='border-b border-gray-200 pb-4'>
           <div className='flex items-center justify-between'>
             <span className='font-semibold text-gray-900'>Display Total Price</span>
             <label className='relative inline-flex items-center cursor-pointer'>
@@ -27,7 +27,7 @@ const PropertyFilters = () => {
             </label>
           </div>
           <p className='text-sm text-gray-500 mt-1'>Price per night with taxes</p>
-        </div>
+        </div> */}
 
         {/* Price Range */}
         <div className='border-b border-gray-200 pb-6'>
@@ -42,7 +42,7 @@ const PropertyFilters = () => {
               <label className='text-xs text-gray-600 mb-1 block'>Min Price</label>
               <input
                 type='number'
-                placeholder='$ 1000'
+                placeholder='999'
                 className='w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
               />
             </div>
@@ -50,7 +50,7 @@ const PropertyFilters = () => {
               <label className='text-xs text-gray-600 mb-1 block'>Max Price</label>
               <input
                 type='number'
-                placeholder='$ 500000'
+                placeholder='$ 10000'
                 className='w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
               />
             </div>
@@ -128,13 +128,7 @@ const PropertyFilters = () => {
           </div>
         </div>
 
-        {/* Brands */}
-        <div>
-          <button className='flex items-center justify-between w-full'>
-            <h3 className='font-semibold text-gray-900'>Brands</h3>
-            <FaChevronDown className='text-gray-600' />
-          </button>
-        </div>
+      
       </div>
     </aside>
   );

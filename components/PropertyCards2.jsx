@@ -194,7 +194,7 @@ const PropertyCard2 = ({ property }) => {
               </div>
 
               <Link
-                href={`/properties/${property._id}`}
+                href={`/listings/${property._id}`}
                 className='inline-flex items-center justify-center gap-2 px-8 py-3 bg-black hover:bg-gray-800 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md'
               >
                 View Details

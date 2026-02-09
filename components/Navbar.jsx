@@ -86,25 +86,25 @@ const Navbar = () => {
                   Home
                 </Link>
                 <Link
-                  href='/properties'
-                  className={`${pathname === '/properties' ? 'bg-black' : ''
+                  href='/listings'
+                  className={`${pathname === '/listings' ? 'bg-black' : ''
                     } text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2`}
                 >
                   Listings
                 </Link>
                 {session && (
                   <Link
-                    href='/properties/add'
-                    className={`${pathname === '/properties/add' ? 'bg-black' : ''
+                    href='/listings/add'
+                    className={`${pathname === '/listings/add' ? 'bg-black' : ''
                       } text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2`}
                   >
-                    Add Property
+                    Add Listing
                   </Link>
                 )}
                 {session && (
                   <Link
                     href='/bookings'
-                    className={`${pathname === '/properties/add' ? 'bg-black' : ''
+                    className={`${pathname === '/listings/add' ? 'bg-black' : ''
                       } text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2`}
                   >
                     Bookings
@@ -209,7 +209,7 @@ const Navbar = () => {
                       Your Profile
                     </Link>
                     <Link
-                      href='/properties/saved'
+                      href='/listings/saved'
                       className='block px-4 py-2 text-sm text-gray-700'
                       role='menuitem'
                       tabIndex='-1'
@@ -257,17 +257,17 @@ const Navbar = () => {
               Home
             </Link>
             <Link
-              href='/properties'
-              className={`${pathname === '/properties' ? 'bg-black' : ''
+              href='/listings'
+              className={`${pathname === '/listings' ? 'bg-black' : ''
                 } text-white block rounded-md px-3 py-2 text-base font-medium`}
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Properties
+              Listings
             </Link>
             {session && (
               <Link
-                href='/properties/add'
-                className={`${pathname === '/properties/add' ? 'bg-black' : ''
+                href='/listings/add'
+                className={`${pathname === '/listings/add' ? 'bg-black' : ''
                   } text-white block rounded-md px-3 py-2 text-base font-medium`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >

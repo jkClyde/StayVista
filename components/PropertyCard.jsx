@@ -11,13 +11,15 @@ import {
 const PropertyCard = ({ property }) => {
   const getRateDisplay = () => {
     const { rates } = property;
-    if (rates.monthly) {
-      return ` ₱${rates.monthly.toLocaleString()}/mo`;
+
+    if (rates.nightly) {
+      return `₱${rates.nightly.toLocaleString()}/night`;
     } else if (rates.weekly) {
-      return ` ₱${rates.weekly.toLocaleString()}/wk`;
-    } else if (rates.nightly) {
-      return ` ₱${rates.nightly.toLocaleString()}/night`;
+      return `₱${rates.weekly.toLocaleString()}/wk`;
+    } else if (rates.monthly) {
+      return `₱${rates.monthly.toLocaleString()}/mo`;
     }
+
   };
 
   return (
@@ -81,7 +83,7 @@ const PropertyCard = ({ property }) => {
             </span>
           </div>
           <Link
-            href={`/properties/${property._id}`}
+            href={`/listings/${property._id}`}
             className='h-[36px] bg-[#23274A] hover:bg-[#32356B] text-white px-4 py-2 rounded-lg text-center text-sm'
           >
             Details
