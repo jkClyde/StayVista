@@ -133,7 +133,7 @@ const PropertyDetails = ({ property }) => {
           
           {property.bedrooms > 0 && (
             <div className='text-center p-4 bg-gray-50 rounded-lg'>
-              <i className='fa-solid fa-bed-front text-3xl text-[#1A1E43] mb-2' />
+              <FaBed className='text-3xl text-[#1A1E43] mx-auto mb-2' />
               <p className='text-2xl font-bold text-gray-900'>{property.bedrooms}</p>
               <p className='text-sm text-gray-600'>Bedrooms</p>
             </div>
