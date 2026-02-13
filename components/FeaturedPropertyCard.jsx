@@ -9,64 +9,99 @@ import {
 } from 'react-icons/fa';
 
 const FeaturedPropertyCard = ({ property }) => {
-  const getRateDisplay = () => {
-    const { rates } = property;
+  // Handle both old and new schema
+  const propertyName = property.title || property.name;
+  const propertyType = property.propertyType || property.type;
+  const bathrooms = property.bathrooms || property.baths;
+  const locationCity = property.location?.area || property.location?.city;
+  const locationState = property.location?.state;
+  
+  // Handle pricing - support both old (rates) and new (basePricePerNight) schema
+  const pricePerNight = property.basePricePerNight || property.rates?.nightly;
+  const pricePerWeek = property.rates?.weekly;
+  const pricePerMonth = property.rates?.monthly;
 
-    if (rates.monthly) {
-      return `${rates.monthly.toLocaleString()}/mo`;
-    } else if (rates.weekly) {
-      return `${rates.weekly.toLocaleString()}/wk`;
-    } else if (rates.nightly) {
-      return `${rates.nightly.toLocaleString()}/night`;
+  const getRateDisplay = () => {
+    if (pricePerMonth) {
+      return `₱${pricePerMonth.toLocaleString()}/mo`;
+    } else if (pricePerWeek) {
+      return `₱${pricePerWeek.toLocaleString()}/wk`;
+    } else if (pricePerNight) {
+      return `₱${pricePerNight.toLocaleString()}/night`;
     }
+    return 'Contact for rates';
+  };
+
+  // Format property type safely
+  const formatPropertyType = (type) => {
+    if (!type) return '';
+    return type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   };
 
   return (
     <div className='bg-white rounded-xl shadow-md relative flex flex-col md:flex-row'>
-      <Image
-        src={property.images[0]}
-        alt=''
-        width={0}
-        height={0}
-        sizes='100vw'
-        className='object-cover rounded-t-xl md:rounded-tr-none md:rounded-l-xl w-full md:w-2/5'
-      />
+      {property.images && property.images.length > 0 ? (
+        <Image
+          src={property.images[0]}
+          alt={propertyName}
+          width={0}
+          height={0}
+          sizes='100vw'
+          className='object-cover rounded-t-xl md:rounded-tr-none md:rounded-l-xl w-full md:w-2/5'
+        />
+      ) : (
+        <div className='bg-gray-200 rounded-t-xl md:rounded-tr-none md:rounded-l-xl w-full md:w-2/5 flex items-center justify-center'>
+          <FaBed className='text-6xl text-gray-400' />
+        </div>
+      )}
       <div className='p-6'>
-        <h3 className='text-xl font-bold'>{property.name}</h3>
-        <div className='text-gray-600 mb-4'>{property.type}</div>
+        <h3 className='text-xl font-bold'>{propertyName}</h3>
+        <div className='text-gray-600 mb-4'>{formatPropertyType(propertyType)}</div>
         <h3 className='absolute top-[10px] left-[10px] bg-white px-4 py-2 rounded-lg text-blue-500 font-bold text-right md:text-center lg:text-right'>
-          ${getRateDisplay()}
+          {getRateDisplay()}
         </h3>
         <div className='flex justify-center gap-4 text-gray-500 mb-4'>
-          <p>
-            <FaBed className='inline-block mr-2' /> {property.beds}{' '}
-            <span className='md:hidden lg:inline'>Beds</span>
-          </p>
-          <p>
-            <FaBath className='inline-block mr-2' /> {property.baths}{' '}
-            <span className='md:hidden lg:inline'>Baths</span>
-          </p>
-          <p>
-            <FaRulerCombined className='inline-block mr-2' />
-            {property.square_feet}{' '}
-            <span className='md:hidden lg:inline'>sqft</span>
-          </p>
+          {property.beds && (
+            <p>
+              <FaBed className='inline-block mr-2' /> {property.beds}{' '}
+              <span className='md:hidden lg:inline'>Beds</span>
+            </p>
+          )}
+          {bathrooms && (
+            <p>
+              <FaBath className='inline-block mr-2' /> {bathrooms}{' '}
+              <span className='md:hidden lg:inline'>Baths</span>
+            </p>
+          )}
+          {property.square_feet && (
+            <p>
+              <FaRulerCombined className='inline-block mr-2' />
+              {property.square_feet}{' '}
+              <span className='md:hidden lg:inline'>sqft</span>
+            </p>
+          )}
+          {property.maxGuests && (
+            <p>
+              👥 {property.maxGuests}{' '}
+              <span className='md:hidden lg:inline'>Guests</span>
+            </p>
+          )}
         </div>
 
         <div className='flex justify-center gap-4 text-green-900 text-sm mb-4'>
-          {property.rates.nightly && (
+          {pricePerNight && (
             <p>
               <FaMoneyBill className='inline mr-2' /> Nightly
             </p>
           )}
 
-          {property.rates.weekly && (
+          {pricePerWeek && (
             <p>
               <FaMoneyBill className='inline mr-2' /> Weekly
             </p>
           )}
 
-          {property.rates.monthly && (
+          {pricePerMonth && (
             <p>
               <FaMoneyBill className='inline mr-2' /> Monthly
             </p>
@@ -79,8 +114,9 @@ const FeaturedPropertyCard = ({ property }) => {
           <div className='flex align-middle gap-2 mb-4 lg:mb-0'>
             <FaMapMarker className='text-lg text-orange-700' />
             <span className='text-orange-700'>
-              {' '}
-              {property.location.city} {property.location.state}
+              {locationCity}
+              {locationState && ` ${locationState}`}
+              {property.location?.landmark && ` - Near ${property.location.landmark}`}
             </span>
           </div>
           <Link

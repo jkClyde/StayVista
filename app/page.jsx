@@ -8,7 +8,7 @@ const HomePage = () => {
     <>
       <div className="md:pt-[120px]">
         <InfoBoxes />
-        <FeaturedProperties />
+        {/* <FeaturedProperties /> */}
         <HomeProperties />
       </div>
 
