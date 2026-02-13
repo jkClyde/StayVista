@@ -81,13 +81,23 @@ const PropertyPage = async ({ params }) => {
         {/* Main Content */}
         <div className='container mx-auto py-8 px-4 sm:px-6 lg:px-8'>
           <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
+            {/* Mobile: Images First */}
+            {hasImages && (
+              <div className='lg:hidden'>
+                <div className='bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6'>
+                  <PropertyImages images={property.images} />
+                </div>
+                <BookmarkButton property={property} />
+              </div>
+            )}
+
             {/* Main Content - 2 columns */}
-            <div className='lg:col-span-2 order-2 lg:order-1'>
+            <div className='lg:col-span-2'>
               <PropertyDetails property={property} />
             </div>
 
-            {/* Sidebar - 1 column - Sticky */}
-            <aside className='lg:col-span-1 order-1 lg:order-2'>
+            {/* Desktop Sidebar - 1 column - Sticky */}
+            <aside className='hidden lg:block lg:col-span-1'>
               <div className='sticky top-24 space-y-6'>
                 {/* Image Gallery */}
                 {hasImages && (
@@ -101,6 +111,11 @@ const PropertyPage = async ({ params }) => {
                 {/* <PropertyContactForm property={property} /> */}
               </div>
             </aside>
+
+            {/* Mobile: Share Buttons Last */}
+            <div className='lg:hidden'>
+              <ShareButtons property={property} />
+            </div>
           </div>
         </div>
       </div>
