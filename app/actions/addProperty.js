@@ -17,36 +17,28 @@ async function addProperty(formData) {
 
   const { userId } = sessionUser;
 
-  // Access all values for amenities and images
   const amenities = formData.getAll('amenities');
   const images = formData.getAll('images').filter((image) => image.name !== '');
 
-  // Create the propertyData object with embedded seller_info
   const propertyData = {
-    type: formData.get('type'),
-    name: formData.get('name'),
-    description: formData.get('description'),
-    location: {
-      street: formData.get('location.street'),
-      city: formData.get('location.city'),
-      state: formData.get('location.state'),
-      zipcode: formData.get('location.zipcode'),
-    },
-    beds: formData.get('beds'),
-    baths: formData.get('baths'),
-    square_feet: formData.get('square_feet'),
-    amenities,
-    rates: {
-      weekly: formData.get('rates.weekly'),
-      monthly: formData.get('rates.monthly'),
-      nightly: formData.get('rates.nightly'),
-    },
-    seller_info: {
-      name: formData.get('seller_info.name'),
-      email: formData.get('seller_info.email'),
-      phone: formData.get('seller_info.phone'),
-    },
     owner: userId,
+    title: formData.get('title'),
+    description: formData.get('description'),
+    propertyType: formData.get('propertyType'),
+    location: {
+      area: formData.get('location.area'),
+      street: formData.get('location.street'),
+      landmark: formData.get('location.landmark'),
+    },
+    maxGuests: formData.get('maxGuests'),
+    bedrooms: formData.get('bedrooms'),
+    beds: formData.get('beds'),
+    bathrooms: formData.get('bathrooms'),
+    basePricePerNight: formData.get('basePricePerNight'),
+    amenities,
+    houseRules: formData.get('houseRules'),
+    checkInTime: formData.get('checkInTime') || '14:00',
+    checkOutTime: formData.get('checkOutTime') || '12:00',
   };
 
   const imageUrls = [];
@@ -56,10 +48,8 @@ async function addProperty(formData) {
     const imageArray = Array.from(new Uint8Array(imageBuffer));
     const imageData = Buffer.from(imageArray);
 
-    // Convert the image data to base64
     const imageBase64 = imageData.toString('base64');
 
-    // Make request to upload to Cloudinary
     const result = await cloudinary.uploader.upload(
       `data:image/png;base64,${imageBase64}`,
       {
@@ -77,7 +67,7 @@ async function addProperty(formData) {
 
   revalidatePath('/', 'layout');
 
-  redirect(`/properties/${newProperty._id}`);
+  redirect(`/listings/${newProperty._id}`);
 }
 
 export default addProperty;

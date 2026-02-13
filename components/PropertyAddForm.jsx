@@ -7,37 +7,35 @@ const PropertyAddForm = () => {
       <h2 className='text-3xl text-center font-semibold mb-6'>Add Property</h2>
 
       <div className='mb-4'>
-        <label htmlFor='type' className='block text-gray-700 font-bold mb-2'>
+        <label htmlFor='propertyType' className='block text-gray-700 font-bold mb-2'>
           Property Type
         </label>
         <select
-          id='type'
-          name='type'
+          id='propertyType'
+          name='propertyType'
           className='border rounded w-full py-2 px-3'
           required
         >
-          <option value='Apartment'>Apartment</option>
-          <option value='Condo'>Condo</option>
-          <option value='House'>House</option>
-          <option value='CabinOrCottage'>Cabin or Cottage</option>
-          <option value='Room'>Room</option>
-          <option value='Studio'>Studio</option>
-          <option value='Other'>Other</option>
+          <option value='entire_place'>Entire Place</option>
+          <option value='private_room'>Private Room</option>
+          <option value='bedspace'>Bedspace</option>
         </select>
       </div>
+
       <div className='mb-4'>
-        <label className='block text-gray-700 font-bold mb-2'>
-          Listing Name
+        <label htmlFor='title' className='block text-gray-700 font-bold mb-2'>
+          Property Title
         </label>
         <input
           type='text'
-          id='name'
-          name='name'
+          id='title'
+          name='title'
           className='border rounded w-full py-2 px-3 mb-2'
-          placeholder='eg. Beautiful Apartment In Miami'
+          placeholder='eg. Cozy Studio in Baguio City'
           required
         />
       </div>
+
       <div className='mb-4'>
         <label
           htmlFor='description'
@@ -56,40 +54,69 @@ const PropertyAddForm = () => {
 
       <div className='mb-4 bg-blue-50 p-4'>
         <label className='block text-gray-700 font-bold mb-2'>Location</label>
+        <div className='mb-2'>
+          <label htmlFor='area' className='block text-gray-600 mb-1'>
+            Area
+          </label>
+          <select
+            id='area'
+            name='location.area'
+            className='border rounded w-full py-2 px-3'
+            required
+          >
+            <option value=''>Select Area</option>
+            <option value='Baguio City'>Baguio City</option>
+            <option value='La Trinidad'>La Trinidad</option>
+            <option value='Itogon'>Itogon</option>
+            <option value='Sablan'>Sablan</option>
+            <option value='Tuba'>Tuba</option>
+            <option value='Tublay'>Tublay</option>
+          </select>
+        </div>
         <input
           type='text'
           id='street'
           name='location.street'
           className='border rounded w-full py-2 px-3 mb-2'
-          placeholder='Street'
+          placeholder='Street Address (Optional)'
         />
         <input
           type='text'
-          id='city'
-          name='location.city'
+          id='landmark'
+          name='location.landmark'
           className='border rounded w-full py-2 px-3 mb-2'
-          placeholder='City'
-          required
-        />
-        <input
-          type='text'
-          id='state'
-          name='location.state'
-          className='border rounded w-full py-2 px-3 mb-2'
-          placeholder='State'
-          required
-        />
-        <input
-          type='text'
-          id='zipcode'
-          name='location.zipcode'
-          className='border rounded w-full py-2 px-3 mb-2'
-          placeholder='Zipcode'
+          placeholder='Landmark (Optional)'
         />
       </div>
 
       <div className='mb-4 flex flex-wrap'>
-        <div className='w-full sm:w-1/3 pr-2'>
+        <div className='w-full sm:w-1/2 pr-2 mb-4'>
+          <label htmlFor='maxGuests' className='block text-gray-700 font-bold mb-2'>
+            Max Guests
+          </label>
+          <input
+            type='number'
+            id='maxGuests'
+            name='maxGuests'
+            className='border rounded w-full py-2 px-3'
+            min='1'
+            required
+          />
+        </div>
+        <div className='w-full sm:w-1/2 pl-2 mb-4'>
+          <label htmlFor='bedrooms' className='block text-gray-700 font-bold mb-2'>
+            Bedrooms
+          </label>
+          <input
+            type='number'
+            id='bedrooms'
+            name='bedrooms'
+            className='border rounded w-full py-2 px-3'
+            min='0'
+            defaultValue='0'
+          />
+        </div>
+        <div className='w-full sm:w-1/2 pr-2'>
           <label htmlFor='beds' className='block text-gray-700 font-bold mb-2'>
             Beds
           </label>
@@ -98,36 +125,40 @@ const PropertyAddForm = () => {
             id='beds'
             name='beds'
             className='border rounded w-full py-2 px-3'
+            min='1'
             required
           />
         </div>
-        <div className='w-full sm:w-1/3 px-2'>
-          <label htmlFor='baths' className='block text-gray-700 font-bold mb-2'>
-            Baths
+        <div className='w-full sm:w-1/2 pl-2'>
+          <label htmlFor='bathrooms' className='block text-gray-700 font-bold mb-2'>
+            Bathrooms
           </label>
           <input
             type='number'
-            id='baths'
-            name='baths'
+            id='bathrooms'
+            name='bathrooms'
             className='border rounded w-full py-2 px-3'
+            min='1'
+            step='0.5'
             required
           />
         </div>
-        <div className='w-full sm:w-1/3 pl-2'>
-          <label
-            htmlFor='square_feet'
-            className='block text-gray-700 font-bold mb-2'
-          >
-            Square Feet
-          </label>
-          <input
-            type='number'
-            id='square_feet'
-            name='square_feet'
-            className='border rounded w-full py-2 px-3'
-            required
-          />
-        </div>
+      </div>
+
+      <div className='mb-4'>
+        <label htmlFor='basePricePerNight' className='block text-gray-700 font-bold mb-2'>
+          Base Price Per Night (₱)
+        </label>
+        <input
+          type='number'
+          id='basePricePerNight'
+          name='basePricePerNight'
+          className='border rounded w-full py-2 px-3'
+          placeholder='Enter price per night'
+          min='0'
+          step='0.01'
+          required
+        />
       </div>
 
       <div className='mb-4'>
@@ -290,92 +321,49 @@ const PropertyAddForm = () => {
         </div>
       </div>
 
+      <div className='mb-4'>
+        <label htmlFor='houseRules' className='block text-gray-700 font-bold mb-2'>
+          House Rules
+        </label>
+        <textarea
+          id='houseRules'
+          name='houseRules'
+          className='border rounded w-full py-2 px-3'
+          rows='3'
+          placeholder='e.g., No smoking, No pets, Quiet hours after 10 PM'
+        ></textarea>
+      </div>
+
       <div className='mb-4 bg-blue-50 p-4'>
         <label className='block text-gray-700 font-bold mb-2'>
-          Rates (Leave blank if not applicable)
+          Check-in/Check-out Times
         </label>
-        <div className='flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4'>
-          <div className='flex items-center'>
-            <label htmlFor='weekly_rate' className='mr-2'>
-              Weekly
+        <div className='flex flex-col sm:flex-row sm:space-x-4'>
+          <div className='flex-1 mb-2 sm:mb-0'>
+            <label htmlFor='checkInTime' className='block text-gray-600 mb-1'>
+              Check-in Time
             </label>
             <input
-              type='number'
-              id='weekly_rate'
-              name='rates.weekly'
+              type='time'
+              id='checkInTime'
+              name='checkInTime'
               className='border rounded w-full py-2 px-3'
+              defaultValue='14:00'
             />
           </div>
-          <div className='flex items-center'>
-            <label htmlFor='monthly_rate' className='mr-2'>
-              Monthly
+          <div className='flex-1'>
+            <label htmlFor='checkOutTime' className='block text-gray-600 mb-1'>
+              Check-out Time
             </label>
             <input
-              type='number'
-              id='monthly_rate'
-              name='rates.monthly'
+              type='time'
+              id='checkOutTime'
+              name='checkOutTime'
               className='border rounded w-full py-2 px-3'
-            />
-          </div>
-          <div className='flex items-center'>
-            <label htmlFor='nightly_rate' className='mr-2'>
-              Nightly
-            </label>
-            <input
-              type='number'
-              id='nightly_rate'
-              name='rates.nightly'
-              className='border rounded w-full py-2 px-3'
+              defaultValue='12:00'
             />
           </div>
         </div>
-      </div>
-
-      <div className='mb-4'>
-        <label
-          htmlFor='seller_name'
-          className='block text-gray-700 font-bold mb-2'
-        >
-          Seller Name
-        </label>
-        <input
-          type='text'
-          id='seller_name'
-          name='seller_info.name.'
-          className='border rounded w-full py-2 px-3'
-          placeholder='Name'
-        />
-      </div>
-      <div className='mb-4'>
-        <label
-          htmlFor='seller_email'
-          className='block text-gray-700 font-bold mb-2'
-        >
-          Seller Email
-        </label>
-        <input
-          type='email'
-          id='seller_email'
-          name='seller_info.email'
-          className='border rounded w-full py-2 px-3'
-          placeholder='Email address'
-          required
-        />
-      </div>
-      <div className='mb-4'>
-        <label
-          htmlFor='seller_phone'
-          className='block text-gray-700 font-bold mb-2'
-        >
-          Seller Phone
-        </label>
-        <input
-          type='tel'
-          id='seller_phone'
-          name='seller_info.phone'
-          className='border rounded w-full py-2 px-3'
-          placeholder='Phone'
-        />
       </div>
 
       <div className='mb-4'>

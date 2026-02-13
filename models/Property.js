@@ -7,76 +7,100 @@ const PropertySchema = new Schema(
       ref: 'User',
       required: true,
     },
-    name: {
+
+    title: {
       type: String,
       required: true,
+      trim: true,
     },
-    type: {
-      type: String,
-      required: true,
-    },
+
     description: {
       type: String,
+      trim: true,
     },
+
+    propertyType: {
+      type: String,
+      enum: ['entire_place', 'private_room', 'bedspace'],
+      required: true,
+    },
+
     location: {
-      street: {
+      area: {
         type: String,
+        enum: [
+          'Baguio City',
+          'La Trinidad',
+          'Itogon',
+          'Sablan',
+          'Tuba',
+          'Tublay',
+        ],
+        required: true,
       },
-      city: {
-        type: String,
-      },
-      state: {
-        type: String,
-      },
-      zipcode: {
-        type: String,
-      },
+      street: String,
+      landmark: String,
     },
+
+    maxGuests: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+
+    bedrooms: {
+      type: Number,
+      default: 0,
+    },
+
     beds: {
       type: Number,
       required: true,
     },
-    baths: {
+
+    bathrooms: {
       type: Number,
       required: true,
     },
-    square_feet: {
+
+    basePricePerNight: {
       type: Number,
       required: true,
     },
+
     amenities: [
       {
         type: String,
       },
     ],
-    rates: {
-      nightly: {
-        type: Number,
-      },
-      weekly: {
-        type: Number,
-      },
-      monthly: {
-        type: Number,
-      },
+
+    houseRules: {
+      type: String,
     },
-    seller_info: {
-      name: {
-        type: String,
-      },
-      email: {
-        type: String,
-      },
-      phone: {
-        type: String,
-      },
+
+    checkInTime: {
+      type: String,
+      default: '14:00',
     },
+
+    checkOutTime: {
+      type: String,
+      default: '12:00',
+    },
+
     images: [
       {
         type: String,
       },
     ],
-    is_featured: {
+
+    status: {
+      type: String,
+      enum: ['active', 'inactive'],
+      default: 'active',
+    },
+
+    isFeatured: {
       type: Boolean,
       default: false,
     },
@@ -87,5 +111,4 @@ const PropertySchema = new Schema(
 );
 
 const Property = models.Property || model('Property', PropertySchema);
-
 export default Property;

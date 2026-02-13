@@ -18,6 +18,18 @@ const PropertyCard2 = ({ property }) => {
   const images = property.images || [];
   const hasMultipleImages = images.length > 1;
 
+  // Handle both old and new schema
+  const propertyName = property.title || property.name;
+  const propertyType = property.propertyType || property.type;
+  const bathrooms = property.bathrooms || property.baths;
+  const locationCity = property.location?.area || property.location?.city;
+  const locationState = property.location?.state;
+  
+  // Handle pricing - support both old (rates) and new (basePricePerNight) schema
+  const pricePerNight = property.basePricePerNight || property.rates?.nightly;
+  const pricePerWeek = property.rates?.weekly;
+  const pricePerMonth = property.rates?.monthly;
+
   const nextImage = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -44,7 +56,7 @@ const PropertyCard2 = ({ property }) => {
           {images.length > 0 ? (
             <Image
               src={images[currentImageIndex]}
-              alt={`${property.name} - Image ${currentImageIndex + 1}`}
+              alt={`${propertyName} - Image ${currentImageIndex + 1}`}
               fill
               className='object-cover'
             />
@@ -56,9 +68,9 @@ const PropertyCard2 = ({ property }) => {
           
           {/* Badges */}
           <div className='absolute top-4 left-4 flex gap-2'>
-            {property.type && (
+            {propertyType && (
               <span className='px-3 py-1.5 rounded-md text-xs font-semibold bg-gray-900 text-white shadow-sm'>
-                {property.type}
+                {propertyType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
               </span>
             )}
           </div>
@@ -116,14 +128,16 @@ const PropertyCard2 = ({ property }) => {
             {/* Left Side - Details */}
             <div className='flex-1'>
               <h2 className='text-2xl font-bold text-gray-900 mb-2'>
-                {property.name}
+                {propertyName}
               </h2>
 
               {/* Location */}
               <div className='flex items-center gap-2 text-gray-600 mb-4'>
                 <FaMapMarkerAlt className='text-sm' />
                 <span className='text-sm'>
-                  {property.location.city}, {property.location.state}
+                  {locationCity}
+                  {locationState && `, ${locationState}`}
+                  {property.location?.landmark && ` - Near ${property.location.landmark}`}
                 </span>
               </div>
 
@@ -136,13 +150,25 @@ const PropertyCard2 = ({ property }) => {
                 <span className='text-gray-300'>•</span>
                 <span className='flex items-center gap-1.5'>
                   <FaBath className='text-blue-500' />
-                  {property.baths} Baths
+                  {bathrooms} Baths
                 </span>
-                <span className='text-gray-300'>•</span>
-                <span className='flex items-center gap-1.5'>
-                  <FaRulerCombined className='text-blue-500' />
-                  {property.square_feet} sqft
-                </span>
+                {property.square_feet && (
+                  <>
+                    <span className='text-gray-300'>•</span>
+                    <span className='flex items-center gap-1.5'>
+                      <FaRulerCombined className='text-blue-500' />
+                      {property.square_feet} sqft
+                    </span>
+                  </>
+                )}
+                {property.maxGuests && (
+                  <>
+                    <span className='text-gray-300'>•</span>
+                    <span className='flex items-center gap-1.5'>
+                      👥 {property.maxGuests} Guests
+                    </span>
+                  </>
+                )}
               </div>
 
               {/* Amenities */}
@@ -176,20 +202,20 @@ const PropertyCard2 = ({ property }) => {
             <div className='lg:ml-8 mt-6 lg:mt-0 flex flex-col items-end'>
               <div className='text-right mb-4'>
                 <div className='text-3xl font-bold text-gray-900 mb-1'>
-                  {property.rates.nightly ? (
-                    `₱${property.rates.nightly.toLocaleString()}`
-                  ) : property.rates.weekly ? (
-                    `₱${property.rates.weekly.toLocaleString()}`
-                  ) : property.rates.monthly ? (
-                    `₱${property.rates.monthly.toLocaleString()}`
+                  {pricePerNight ? (
+                    `₱${pricePerNight.toLocaleString()}`
+                  ) : pricePerWeek ? (
+                    `₱${pricePerWeek.toLocaleString()}`
+                  ) : pricePerMonth ? (
+                    `₱${pricePerMonth.toLocaleString()}`
                   ) : (
                     'Contact for rates'
                   )}
                 </div>
                 <div className='text-xs text-gray-500'>
-                  {property.rates.nightly && 'Per Night'}
-                  {property.rates.weekly && !property.rates.nightly && 'Per Week'}
-                  {property.rates.monthly && !property.rates.nightly && !property.rates.weekly && 'Per Month'}
+                  {pricePerNight && 'Per Night'}
+                  {pricePerWeek && !pricePerNight && 'Per Week'}
+                  {pricePerMonth && !pricePerNight && !pricePerWeek && 'Per Month'}
                 </div>
               </div>
 
