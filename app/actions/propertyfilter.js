@@ -1,15 +1,20 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useTransition } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
-const PropertyFilters = ({ onFilterChange }) => {
+const PropertyFilters = ({ initialFilters = {} }) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
+
   const [filters, setFilters] = useState({
-    minPrice: '',
-    maxPrice: '',
-    bedrooms: 0,
-    amenities: [],
-    propertyType: [],
-    location: [],
+    minPrice: initialFilters.minPrice || '',
+    maxPrice: initialFilters.maxPrice || '',
+    bedrooms: initialFilters.bedrooms || 0,
+    amenities: initialFilters.amenities || [],
+    propertyType: initialFilters.propertyType || [],
+    location: initialFilters.location || [],
   });
 
   const [expandedSections, setExpandedSections] = useState({
@@ -53,11 +58,51 @@ const PropertyFilters = ({ onFilterChange }) => {
     { id: 'Tublay', label: 'Tublay' },
   ];
 
+  // Debounce timer for price inputs
   useEffect(() => {
-    if (onFilterChange) {
-      onFilterChange(filters);
+    const timer = setTimeout(() => {
+      updateURL(filters);
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, [filters.minPrice, filters.maxPrice]);
+
+  const updateURL = (newFilters) => {
+    const params = new URLSearchParams();
+    
+    // Always reset to page 1 when filters change
+    params.set('page', '1');
+
+    // Add all filter params
+    if (newFilters.minPrice && newFilters.minPrice !== '') {
+      params.set('minPrice', String(newFilters.minPrice));
     }
-  }, [filters]);
+
+    if (newFilters.maxPrice && newFilters.maxPrice !== '') {
+      params.set('maxPrice', String(newFilters.maxPrice));
+    }
+
+    if (newFilters.bedrooms && newFilters.bedrooms > 0) {
+      params.set('bedrooms', String(newFilters.bedrooms));
+    }
+
+    if (newFilters.amenities && newFilters.amenities.length > 0) {
+      params.set('amenities', newFilters.amenities.join(','));
+    }
+
+    if (newFilters.propertyType && newFilters.propertyType.length > 0) {
+      params.set('propertyType', newFilters.propertyType.join(','));
+    }
+
+    if (newFilters.location && newFilters.location.length > 0) {
+      params.set('location', newFilters.location.join(','));
+    }
+
+    // Use startTransition for smoother updates
+    startTransition(() => {
+      router.replace(`/properties?${params.toString()}`);
+    });
+  };
 
   const toggleSection = (section) => {
     setExpandedSections((prev) => ({
@@ -69,53 +114,63 @@ const PropertyFilters = ({ onFilterChange }) => {
   const handlePriceChange = (field, value) => {
     setFilters((prev) => ({
       ...prev,
-      [field]: value === '' ? '' : Number(value),
+      [field]: value === '' ? '' : value,
     }));
   };
 
   const handleBedroomChange = (increment) => {
-    setFilters((prev) => ({
-      ...prev,
-      bedrooms: Math.max(0, prev.bedrooms + increment),
-    }));
+    const newFilters = {
+      ...filters,
+      bedrooms: Math.max(0, filters.bedrooms + increment),
+    };
+    setFilters(newFilters);
+    updateURL(newFilters);
   };
 
   const handleAmenityToggle = (amenityId) => {
-    setFilters((prev) => ({
-      ...prev,
-      amenities: prev.amenities.includes(amenityId)
-        ? prev.amenities.filter((id) => id !== amenityId)
-        : [...prev.amenities, amenityId],
-    }));
+    const newFilters = {
+      ...filters,
+      amenities: filters.amenities.includes(amenityId)
+        ? filters.amenities.filter((id) => id !== amenityId)
+        : [...filters.amenities, amenityId],
+    };
+    setFilters(newFilters);
+    updateURL(newFilters);
   };
 
   const handlePropertyTypeToggle = (typeId) => {
-    setFilters((prev) => ({
-      ...prev,
-      propertyType: prev.propertyType.includes(typeId)
-        ? prev.propertyType.filter((id) => id !== typeId)
-        : [...prev.propertyType, typeId],
-    }));
+    const newFilters = {
+      ...filters,
+      propertyType: filters.propertyType.includes(typeId)
+        ? filters.propertyType.filter((id) => id !== typeId)
+        : [...filters.propertyType, typeId],
+    };
+    setFilters(newFilters);
+    updateURL(newFilters);
   };
 
   const handleLocationToggle = (locationId) => {
-    setFilters((prev) => ({
-      ...prev,
-      location: prev.location.includes(locationId)
-        ? prev.location.filter((id) => id !== locationId)
-        : [...prev.location, locationId],
-    }));
+    const newFilters = {
+      ...filters,
+      location: filters.location.includes(locationId)
+        ? filters.location.filter((id) => id !== locationId)
+        : [...filters.location, locationId],
+    };
+    setFilters(newFilters);
+    updateURL(newFilters);
   };
 
   const handleClearAll = () => {
-    setFilters({
+    const clearedFilters = {
       minPrice: '',
       maxPrice: '',
       bedrooms: 0,
       amenities: [],
       propertyType: [],
       location: [],
-    });
+    };
+    setFilters(clearedFilters);
+    updateURL(clearedFilters);
   };
 
   const hasActiveFilters =
@@ -134,7 +189,9 @@ const PropertyFilters = ({ onFilterChange }) => {
     <aside className='hidden lg:block w-80 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto'>
       <div className='p-6 space-y-6'>
         <div className='flex items-center justify-between border-b border-gray-200 pb-4'>
-          <h2 className='text-lg font-bold text-gray-900'>Filters</h2>
+          <h2 className='text-lg font-bold text-gray-900'>
+            Filters {isPending && <span className='text-xs text-gray-500'>(updating...)</span>}
+          </h2>
           {hasActiveFilters && (
             <button
               onClick={handleClearAll}
@@ -299,6 +356,14 @@ const PropertyFilters = ({ onFilterChange }) => {
             </div>
           )}
         </div>
+
+        {/* Debug Info - Remove this in production */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className='bg-gray-100 p-3 rounded text-xs'>
+            <div className='font-semibold mb-1'>Active Filters:</div>
+            <pre className='overflow-auto'>{JSON.stringify(filters, null, 2)}</pre>
+          </div>
+        )}
       </div>
     </aside>
   );
