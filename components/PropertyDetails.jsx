@@ -5,6 +5,8 @@ import {
   FaTimes,
   FaCheck,
   FaMapMarker,
+  FaClock,
+  FaUsers,
 } from 'react-icons/fa';
 import PropertyMap from '@/components/PropertyMap';
 
@@ -12,7 +14,7 @@ const PropertyDetails = ({ property }) => {
   // Safety check - if property is undefined or null
   if (!property) {
     return (
-      <div className='bg-white p-6 rounded-lg shadow-md'>
+      <div className='bg-white p-6 rounded-xl shadow-sm border border-gray-200'>
         <p className='text-gray-500 text-center'>Property details not available</p>
       </div>
     );
@@ -38,159 +40,215 @@ const PropertyDetails = ({ property }) => {
   };
 
   return (
-    <main>
-      <div className='bg-white p-6 rounded-lg shadow-md text-center md:text-left'>
-        {propertyType && (
-          <div className='text-gray-500 mb-4'>
-            {formatPropertyType(propertyType)}
+    <main className='space-y-6'>
+      {/* Header Card */}
+      <div className='bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden'>
+        <div className='p-6 sm:p-8'>
+          {/* Property Type Badge */}
+          {propertyType && (
+            <span className='inline-block px-4 py-1.5 bg-[#1A1E43] text-white text-sm font-semibold rounded-full mb-4'>
+              {formatPropertyType(propertyType)}
+            </span>
+          )}
+          
+          {/* Title */}
+          <h1 className='text-3xl sm:text-4xl font-bold text-gray-900 mb-4'>
+            {propertyName}
+          </h1>
+          
+          {/* Location */}
+          <div className='flex items-start gap-2 text-gray-600 mb-6'>
+            <FaMapMarker className='text-orange-500 mt-1 flex-shrink-0' />
+            <p className='text-lg'>
+              {locationStreet && <span className='font-medium'>{locationStreet}, </span>}
+              {locationCity}
+              {locationState && <span>, {locationState}</span>}
+              {property.location?.landmark && (
+                <span className='block text-sm text-gray-500 mt-1'>
+                  Near {property.location.landmark}
+                </span>
+              )}
+            </p>
           </div>
-        )}
-        <h1 className='text-3xl font-bold mb-4'>{propertyName}</h1>
-        <div className='text-gray-500 mb-4 flex align-middle justify-center md:justify-start'>
-          <FaMapMarker className='text-orange-700 mt-1 mr-1' />
-          <p className='text-orange-700'>
-            {locationStreet && `${locationStreet}, `}
-            {locationCity}
-            {locationState && ` ${locationState}`}
-            {property.location?.landmark && ` - Near ${property.location.landmark}`}
-          </p>
-        </div>
 
-        <h3 className='text-lg font-bold my-6 bg-gray-800 text-white p-2'>
-          Rates & Options
-        </h3>
-        <div className='flex flex-col md:flex-row justify-around'>
-          <div className='flex items-center justify-center mb-4 border-b border-gray-200 md:border-b-0 pb-4 md:pb-0'>
-            <div className='text-gray-500 mr-2 font-bold'>Nightly</div>
-            <div className='text-2xl font-bold text-[#1A1E43]'>
-              {pricePerNight ? (
-                `₱${pricePerNight.toLocaleString()}`
-              ) : (
-                <FaTimes className='text-red-700' />
+          {/* Price Section */}
+          <div className='bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100'>
+            <h3 className='text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4'>
+              Pricing
+            </h3>
+            <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
+              <div className='text-center sm:text-left'>
+                <p className='text-sm text-gray-600 mb-1'>Per Night</p>
+                <p className='text-3xl font-bold text-[#1A1E43]'>
+                  {pricePerNight ? (
+                    `₱${pricePerNight.toLocaleString()}`
+                  ) : (
+                    <FaTimes className='text-red-500 text-xl inline' />
+                  )}
+                </p>
+              </div>
+              
+              {pricePerWeek && (
+                <div className='text-center sm:text-left'>
+                  <p className='text-sm text-gray-600 mb-1'>Per Week</p>
+                  <p className='text-2xl font-bold text-[#1A1E43]'>
+                    ₱{pricePerWeek.toLocaleString()}
+                  </p>
+                </div>
+              )}
+              
+              {pricePerMonth && (
+                <div className='text-center sm:text-left'>
+                  <p className='text-sm text-gray-600 mb-1'>Per Month</p>
+                  <p className='text-2xl font-bold text-[#1A1E43]'>
+                    ₱{pricePerMonth.toLocaleString()}
+                  </p>
+                </div>
               )}
             </div>
           </div>
-          {pricePerWeek && (
-            <div className='flex items-center justify-center mb-4 border-b border-gray-200 md:border-b-0 pb-4 md:pb-0'>
-              <div className='text-gray-500 mr-2 font-bold'>Weekly</div>
-              <div className='text-2xl font-bold text-[#1A1E43]'>
-                ₱{pricePerWeek.toLocaleString()}
-              </div>
-            </div>
-          )}
-          {pricePerMonth && (
-            <div className='flex items-center justify-center mb-4 pb-4 md:pb-0'>
-              <div className='text-gray-500 mr-2 font-bold'>Monthly</div>
-              <div className='text-2xl font-bold text-[#1A1E43]'>
-                ₱{pricePerMonth.toLocaleString()}
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
-      <div className='bg-white p-6 rounded-lg shadow-md mt-6'>
-        <h3 className='text-lg font-bold mb-6'>Description & Details</h3>
-        <div className='flex justify-center gap-4 text-[#1A1E43] mb-4 text-xl space-x-9'>
+      {/* Quick Stats Card */}
+      <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8'>
+        <h3 className='text-xl font-bold text-gray-900 mb-6'>Property Details</h3>
+        
+        <div className='grid grid-cols-2 sm:grid-cols-4 gap-6'>
           {property.beds && (
-            <p>
-              <FaBed className='inline-block mr-2' /> {property.beds}{' '}
-              <span className='hidden sm:inline'>Beds</span>
-            </p>
+            <div className='text-center p-4 bg-gray-50 rounded-lg'>
+              <FaBed className='text-3xl text-[#1A1E43] mx-auto mb-2' />
+              <p className='text-2xl font-bold text-gray-900'>{property.beds}</p>
+              <p className='text-sm text-gray-600'>Beds</p>
+            </div>
           )}
+          
           {bathrooms && (
-            <p>
-              <FaBath className='inline-block mr-2' /> {bathrooms}{' '}
-              <span className='hidden sm:inline'>Baths</span>
-            </p>
+            <div className='text-center p-4 bg-gray-50 rounded-lg'>
+              <FaBath className='text-3xl text-[#1A1E43] mx-auto mb-2' />
+              <p className='text-2xl font-bold text-gray-900'>{bathrooms}</p>
+              <p className='text-sm text-gray-600'>Baths</p>
+            </div>
           )}
+          
           {property.bedrooms > 0 && (
-            <p>
-              <i className='fa-solid fa-bed-front inline-block mr-2'></i>{' '}
-              {property.bedrooms}{' '}
-              <span className='hidden sm:inline'>Bedrooms</span>
-            </p>
+            <div className='text-center p-4 bg-gray-50 rounded-lg'>
+              <i className='fa-solid fa-bed-front text-3xl text-[#1A1E43] mb-2' />
+              <p className='text-2xl font-bold text-gray-900'>{property.bedrooms}</p>
+              <p className='text-sm text-gray-600'>Bedrooms</p>
+            </div>
           )}
+          
           {property.square_feet && (
-            <p>
-              <FaRulerCombined className='inline-block mr-2' />
-              {property.square_feet}{' '}
-              <span className='hidden sm:inline'>sqft</span>
-            </p>
+            <div className='text-center p-4 bg-gray-50 rounded-lg'>
+              <FaRulerCombined className='text-3xl text-[#1A1E43] mx-auto mb-2' />
+              <p className='text-2xl font-bold text-gray-900'>{property.square_feet}</p>
+              <p className='text-sm text-gray-600'>sqft</p>
+            </div>
+          )}
+          
+          {property.maxGuests && (
+            <div className='text-center p-4 bg-gray-50 rounded-lg'>
+              <FaUsers className='text-3xl text-[#1A1E43] mx-auto mb-2' />
+              <p className='text-2xl font-bold text-gray-900'>{property.maxGuests}</p>
+              <p className='text-sm text-gray-600'>Guests</p>
+            </div>
           )}
         </div>
-        {property.maxGuests && (
-          <p className='text-gray-500 mb-4'>Max Guests: {property.maxGuests}</p>
-        )}
+
         {property.description && (
-          <p className='text-gray-500 mb-4'>{property.description}</p>
+          <div className='mt-8 pt-8 border-t border-gray-200'>
+            <h4 className='font-semibold text-gray-900 mb-3'>Description</h4>
+            <p className='text-gray-700 leading-relaxed'>{property.description}</p>
+          </div>
         )}
       </div>
 
+      {/* Amenities Card */}
       {property.amenities && property.amenities.length > 0 && (
-        <div className='bg-white p-6 rounded-lg shadow-md mt-6'>
-          <h3 className='text-lg font-bold mb-6'>Amenities</h3>
-          <ul className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 list-none space-y-2'>
+        <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8'>
+          <h3 className='text-xl font-bold text-gray-900 mb-6'>Amenities</h3>
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
             {property.amenities.map((amenity, index) => (
-              <li key={index}>
-                <FaCheck className='inline-block text-green-600 mr-2' /> {amenity}
-              </li>
+              <div key={index} className='flex items-center gap-3 p-3 bg-gray-50 rounded-lg'>
+                <FaCheck className='text-green-600 flex-shrink-0' />
+                <span className='text-gray-700'>{amenity}</span>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
 
+      {/* House Rules Card */}
       {property.houseRules && (
-        <div className='bg-white p-6 rounded-lg shadow-md mt-6'>
-          <h3 className='text-lg font-bold mb-6'>House Rules</h3>
-          <p className='text-gray-700 whitespace-pre-wrap'>
+        <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8'>
+          <h3 className='text-xl font-bold text-gray-900 mb-6'>House Rules</h3>
+          <p className='text-gray-700 whitespace-pre-wrap leading-relaxed'>
             {property.houseRules}
           </p>
         </div>
       )}
 
+      {/* Check-in/Check-out Card */}
       {(property.checkInTime || property.checkOutTime) && (
-        <div className='bg-white p-6 rounded-lg shadow-md mt-6'>
-          <h3 className='text-lg font-bold mb-6'>Check-in/Check-out</h3>
-          <div className='flex flex-col sm:flex-row justify-around'>
+        <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8'>
+          <h3 className='text-xl font-bold text-gray-900 mb-6'>Check-in & Check-out</h3>
+          <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
             {property.checkInTime && (
-              <div className='mb-4 sm:mb-0'>
-                <p className='text-gray-500 font-bold'>Check-in Time</p>
-                <p className='text-2xl font-bold text-[#1A1E43]'>
-                  {property.checkInTime}
-                </p>
+              <div className='flex items-center gap-4 p-4 bg-green-50 rounded-lg border border-green-100'>
+                <div className='w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0'>
+                  <FaClock className='text-green-600 text-xl' />
+                </div>
+                <div>
+                  <p className='text-sm text-gray-600 font-medium'>Check-in</p>
+                  <p className='text-2xl font-bold text-gray-900'>{property.checkInTime}</p>
+                </div>
               </div>
             )}
             {property.checkOutTime && (
-              <div>
-                <p className='text-gray-500 font-bold'>Check-out Time</p>
-                <p className='text-2xl font-bold text-[#1A1E43]'>
-                  {property.checkOutTime}
-                </p>
+              <div className='flex items-center gap-4 p-4 bg-orange-50 rounded-lg border border-orange-100'>
+                <div className='w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0'>
+                  <FaClock className='text-orange-600 text-xl' />
+                </div>
+                <div>
+                  <p className='text-sm text-gray-600 font-medium'>Check-out</p>
+                  <p className='text-2xl font-bold text-gray-900'>{property.checkOutTime}</p>
+                </div>
               </div>
             )}
           </div>
         </div>
       )}
 
+      {/* Contact Information Card */}
       {property.seller_info && (
-        <div className='bg-white p-6 rounded-lg shadow-md mt-6'>
-          <h3 className='text-lg font-bold mb-6'>Contact Information</h3>
-          <p className='text-gray-700'>
-            <strong>Name:</strong> {property.seller_info.name}
-          </p>
-          <p className='text-gray-700'>
-            <strong>Email:</strong> {property.seller_info.email}
-          </p>
-          {property.seller_info.phone && (
-            <p className='text-gray-700'>
-              <strong>Phone:</strong> {property.seller_info.phone}
-            </p>
-          )}
+        <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8'>
+          <h3 className='text-xl font-bold text-gray-900 mb-6'>Contact Information</h3>
+          <div className='space-y-3'>
+            <div className='flex items-center gap-3'>
+              <span className='text-gray-600 font-medium min-w-[80px]'>Name:</span>
+              <span className='text-gray-900'>{property.seller_info.name}</span>
+            </div>
+            <div className='flex items-center gap-3'>
+              <span className='text-gray-600 font-medium min-w-[80px]'>Email:</span>
+              <a href={`mailto:${property.seller_info.email}`} className='text-blue-600 hover:underline'>
+                {property.seller_info.email}
+              </a>
+            </div>
+            {property.seller_info.phone && (
+              <div className='flex items-center gap-3'>
+                <span className='text-gray-600 font-medium min-w-[80px]'>Phone:</span>
+                <a href={`tel:${property.seller_info.phone}`} className='text-blue-600 hover:underline'>
+                  {property.seller_info.phone}
+                </a>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
-      {/* <div className='bg-white p-6 rounded-lg shadow-md mt-6'>
+      {/* Map Section */}
+      {/* <div className='bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden'>
         <PropertyMap property={property} />
       </div> */}
     </main>

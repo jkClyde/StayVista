@@ -25,11 +25,14 @@ const PropertyPage = async ({ params }) => {
     if (!propertyId || !propertyId.match(/^[0-9a-fA-F]{24}$/)) {
       console.log('Invalid MongoDB ID format:', propertyId);
       return (
-        <div className='text-center mt-10 px-4'>
-          <h1 className='text-2xl font-bold'>Invalid Property ID</h1>
-          <Link href='/properties' className='text-[#1A1E43] hover:text-[#303879] mt-4 inline-block'>
-            <FaArrowLeft className='inline mr-2' /> Back to Properties
-          </Link>
+        <div className='min-h-screen flex items-center justify-center px-4'>
+          <div className='text-center'>
+            <h1 className='text-4xl font-bold text-gray-900 mb-4'>Invalid Property ID</h1>
+            <p className='text-gray-600 mb-8'>The property ID format is not valid.</p>
+            <Link href='/listings' className='inline-flex items-center gap-2 bg-[#1A1E43] hover:bg-[#303879] text-white px-6 py-3 rounded-lg transition-colors'>
+              <FaArrowLeft /> Back to Listings
+            </Link>
+          </div>
         </div>
       );
     }
@@ -42,12 +45,14 @@ const PropertyPage = async ({ params }) => {
     // Handle property not found
     if (!propertyDoc) { 
       return (
-        <div className='text-center mt-10 px-4'>
-          <h1 className='text-2xl font-bold mb-4'>Property Not Found</h1>
-          <p className='text-gray-600 mb-4'>The property you're looking for doesn't exist.</p>
-          <Link href='/properties' className='text-[#1A1E43] hover:text-[#303879]'>
-            <FaArrowLeft className='inline mr-2' /> Back to Properties
-          </Link>
+        <div className='min-h-screen flex items-center justify-center px-4'>
+          <div className='text-center'>
+            <h1 className='text-4xl font-bold text-gray-900 mb-4'>Property Not Found</h1>
+            <p className='text-gray-600 mb-8'>The property you're looking for doesn't exist.</p>
+            <Link href='/listings' className='inline-flex items-center gap-2 bg-[#1A1E43] hover:bg-[#303879] text-white px-6 py-3 rounded-lg transition-colors'>
+              <FaArrowLeft /> Back to Listings
+            </Link>
+          </div>
         </div>
       );
     }
@@ -59,48 +64,59 @@ const PropertyPage = async ({ params }) => {
     const hasImages = property.images && property.images.length > 0;
 
     return (
-      <>
-        {hasImages && <PropertyHeaderImage image={property.images[0]} />}
-        
-        <section>
-          <div className='container m-auto py-6 px-6'>
+      <div className='min-h-screen bg-gradient-to-b from-gray-50 to-white'>
+        {/* Back Button */}
+        <div className='bg-white border-b sticky top-0 z-10 shadow-sm'>
+          <div className='container mx-auto py-4 px-4 sm:px-6 lg:px-8'>
             <Link
-              href='/properties'
-              className='text-[#1A1E43] hover:text-[#303879] flex items-center'
+              href='/listings'
+              className='inline-flex items-center gap-2 text-gray-700 hover:text-[#1A1E43] font-medium transition-colors group'
             >
-              <FaArrowLeft className='mr-2' /> Back to Properties
+              <FaArrowLeft className='group-hover:-translate-x-1 transition-transform' /> 
+              Back to Listings
             </Link>
           </div>
-        </section>
+        </div>
 
-        <section className='bg-blue-50'>
-          <div className='container m-auto py-10 px-6'>
-            <div className='grid grid-cols-1 md:grid-cols-70/30 w-full gap-6'>
+        {/* Main Content */}
+        <div className='container mx-auto py-8 px-4 sm:px-6 lg:px-8'>
+          <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
+            {/* Main Content - 2 columns */}
+            <div className='lg:col-span-2 order-2 lg:order-1'>
               <PropertyDetails property={property} />
+            </div>
 
-              {/* Sidebar */}
-              <aside className='space-y-4'>
+            {/* Sidebar - 1 column - Sticky */}
+            <aside className='lg:col-span-1 order-1 lg:order-2'>
+              <div className='sticky top-24 space-y-6'>
+                {/* Image Gallery */}
+                {hasImages && (
+                  <div className='bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden'>
+                    <PropertyImages images={property.images} />
+                  </div>
+                )}
+                
                 <BookmarkButton property={property} />
                 <ShareButtons property={property} />
                 {/* <PropertyContactForm property={property} /> */}
-              </aside>
-            </div>
+              </div>
+            </aside>
           </div>
-        </section>
-
-        {hasImages && <PropertyImages images={property.images} />}
-      </>
+        </div>
+      </div>
     );
   } catch (error) {
     console.error('Error loading property:', error);
     return (
-      <div className='text-center mt-10 px-4'>
-        <h1 className='text-2xl font-bold mb-4'>Error Loading Property</h1>
-        <p className='text-gray-600 mb-4'>An error occurred while loading this property.</p>
-        <p className='text-sm text-gray-500 mb-4'>{error.message}</p>
-        <Link href='/properties' className='text-[#1A1E43] hover:text-[#303879]'>
-          <FaArrowLeft className='inline mr-2' /> Back to Properties
-        </Link>
+      <div className='min-h-screen flex items-center justify-center px-4'>
+        <div className='text-center max-w-md'>
+          <h1 className='text-4xl font-bold text-gray-900 mb-4'>Oops!</h1>
+          <p className='text-gray-600 mb-2'>An error occurred while loading this property.</p>
+          <p className='text-sm text-gray-500 mb-8 font-mono bg-gray-100 p-4 rounded'>{error.message}</p>
+          <Link href='/listings' className='inline-flex items-center gap-2 bg-[#1A1E43] hover:bg-[#303879] text-white px-6 py-3 rounded-lg transition-colors'>
+            <FaArrowLeft /> Back to Listings
+          </Link>
+        </div>
       </div>
     );
   }

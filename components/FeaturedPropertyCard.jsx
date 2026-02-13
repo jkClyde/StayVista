@@ -15,18 +15,12 @@ const FeaturedPropertyCard = ({ property }) => {
   const bathrooms = property.bathrooms || property.baths;
   const locationCity = property.location?.area || property.location?.city;
   const locationState = property.location?.state;
-  
-  // Handle pricing - support both old (rates) and new (basePricePerNight) schema
+
+  // NIGHTLY ONLY
   const pricePerNight = property.basePricePerNight || property.rates?.nightly;
-  const pricePerWeek = property.rates?.weekly;
-  const pricePerMonth = property.rates?.monthly;
 
   const getRateDisplay = () => {
-    if (pricePerMonth) {
-      return `₱${pricePerMonth.toLocaleString()}/mo`;
-    } else if (pricePerWeek) {
-      return `₱${pricePerWeek.toLocaleString()}/wk`;
-    } else if (pricePerNight) {
+    if (pricePerNight) {
       return `₱${pricePerNight.toLocaleString()}/night`;
     }
     return 'Contact for rates';
@@ -54,12 +48,15 @@ const FeaturedPropertyCard = ({ property }) => {
           <FaBed className='text-6xl text-gray-400' />
         </div>
       )}
+
       <div className='p-6'>
         <h3 className='text-xl font-bold'>{propertyName}</h3>
         <div className='text-gray-600 mb-4'>{formatPropertyType(propertyType)}</div>
+
         <h3 className='absolute top-[10px] left-[10px] bg-white px-4 py-2 rounded-lg text-blue-500 font-bold text-right md:text-center lg:text-right'>
           {getRateDisplay()}
         </h3>
+
         <div className='flex justify-center gap-4 text-gray-500 mb-4'>
           {property.beds && (
             <p>
@@ -88,25 +85,14 @@ const FeaturedPropertyCard = ({ property }) => {
           )}
         </div>
 
-        <div className='flex justify-center gap-4 text-green-900 text-sm mb-4'>
-          {pricePerNight && (
+        {/* Nightly Label Only */}
+        {pricePerNight && (
+          <div className='flex justify-center gap-4 text-green-900 text-sm mb-4'>
             <p>
               <FaMoneyBill className='inline mr-2' /> Nightly
             </p>
-          )}
-
-          {pricePerWeek && (
-            <p>
-              <FaMoneyBill className='inline mr-2' /> Weekly
-            </p>
-          )}
-
-          {pricePerMonth && (
-            <p>
-              <FaMoneyBill className='inline mr-2' /> Monthly
-            </p>
-          )}
-        </div>
+          </div>
+        )}
 
         <div className='border border-gray-200 mb-5'></div>
 
@@ -119,6 +105,7 @@ const FeaturedPropertyCard = ({ property }) => {
               {property.location?.landmark && ` - Near ${property.location.landmark}`}
             </span>
           </div>
+
           <Link
             href={`/properties/${property._id}`}
             className='h-[36px] bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-center text-sm'
@@ -130,4 +117,5 @@ const FeaturedPropertyCard = ({ property }) => {
     </div>
   );
 };
+
 export default FeaturedPropertyCard;
