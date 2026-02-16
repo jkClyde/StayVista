@@ -3,10 +3,11 @@ import { useState } from 'react';
 import Image from 'next/image';
 import updateProperty from '@/app/actions/updateProperty';
 import { FaTimes, FaGripVertical } from 'react-icons/fa';
+import { filterConfig } from '@/config/constant';
 
 const PropertyEditForm = ({ property }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   // Handle both old and new schema for default values
   const propertyType = property.propertyType || property.type;
   const propertyTitle = property.title || property.name;
@@ -22,10 +23,10 @@ const PropertyEditForm = ({ property }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     const formData = new FormData(e.target);
     const updatePropertyById = updateProperty.bind(null, property._id);
-    
+
     try {
       await updatePropertyById(formData);
     } finally {
@@ -69,18 +70,18 @@ const PropertyEditForm = ({ property }) => {
 
   const handleDrop = (e, dropIndex) => {
     e.preventDefault();
-    
+
     if (draggedIndex === null || draggedIndex === dropIndex) return;
 
     const newArray = [...existingImages];
     const draggedItem = newArray[draggedIndex];
-    
+
     // Remove from old position
     newArray.splice(draggedIndex, 1);
-    
+
     // Insert at new position
     newArray.splice(dropIndex, 0, draggedItem);
-    
+
     setExistingImages(newArray);
     setDraggedIndex(null);
   };
@@ -127,9 +128,9 @@ const PropertyEditForm = ({ property }) => {
             required
             defaultValue={propertyType}
           >
-            <option value="entire_place">Entire Place</option>
-            <option value="private_room">Private Room</option>
-            <option value="bedspace">Bedspace</option>
+            {filterConfig.propertyTypes.map((propertyType) => (
+              <option key={propertyType.id} value={propertyType.id}>{propertyType.label}</option>
+            ))}
           </select>
         </div>
 
@@ -138,7 +139,7 @@ const PropertyEditForm = ({ property }) => {
           <h3 className="text-sm font-medium text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-3">
             Basic Information
           </h3>
-          
+
           <div className="space-y-3">
             <label htmlFor="title" className="block text-sm font-medium text-gray-700">
               Property Title
@@ -174,7 +175,7 @@ const PropertyEditForm = ({ property }) => {
           <h3 className="text-sm font-medium text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-3">
             Location Details
           </h3>
-          
+
           <div className="grid grid-cols-1 gap-4">
             <div className="space-y-3">
               <label htmlFor="area" className="block text-sm font-medium text-gray-700">
@@ -187,16 +188,14 @@ const PropertyEditForm = ({ property }) => {
                 required
                 defaultValue={locationArea}
               >
-                <option value="">Select Area</option>
-                <option value="Baguio City">Baguio City</option>
-                <option value="La Trinidad">La Trinidad</option>
-                <option value="Itogon">Itogon</option>
-                <option value="Sablan">Sablan</option>
-                <option value="Tuba">Tuba</option>
-                <option value="Tublay">Tublay</option>
+                {filterConfig.locations.map((location) => (
+                  <option key={location.id} value={location.label}>
+                    {location.label}
+                  </option>
+                ))}
               </select>
             </div>
-            
+
             <div className="space-y-3">
               <label htmlFor="street" className="block text-sm font-medium text-gray-700">
                 Street Address <span className="text-gray-400 font-normal">(Optional)</span>
@@ -210,7 +209,7 @@ const PropertyEditForm = ({ property }) => {
                 defaultValue={property.location?.street}
               />
             </div>
-            
+
             <div className="space-y-3">
               <label htmlFor="landmark" className="block text-sm font-medium text-gray-700">
                 Nearby Landmark <span className="text-gray-400 font-normal">(Optional)</span>
@@ -232,7 +231,7 @@ const PropertyEditForm = ({ property }) => {
           <h3 className="text-sm font-medium text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-3">
             Property Specifications
           </h3>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="space-y-3">
               <label htmlFor="maxGuests" className="block text-sm font-medium text-gray-700">
@@ -248,7 +247,7 @@ const PropertyEditForm = ({ property }) => {
                 defaultValue={property.maxGuests || 1}
               />
             </div>
-            
+
             <div className="space-y-3">
               <label htmlFor="bedrooms" className="block text-sm font-medium text-gray-700">
                 Bedrooms
@@ -262,7 +261,7 @@ const PropertyEditForm = ({ property }) => {
                 defaultValue={property.bedrooms || 0}
               />
             </div>
-            
+
             <div className="space-y-3">
               <label htmlFor="beds" className="block text-sm font-medium text-gray-700">
                 Beds
@@ -277,7 +276,7 @@ const PropertyEditForm = ({ property }) => {
                 defaultValue={property.beds}
               />
             </div>
-            
+
             <div className="space-y-3">
               <label htmlFor="bathrooms" className="block text-sm font-medium text-gray-700">
                 Bathrooms
@@ -301,7 +300,7 @@ const PropertyEditForm = ({ property }) => {
           <h3 className="text-sm font-medium text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-3">
             Pricing
           </h3>
-          
+
           <div className="space-y-3 max-w-md">
             <label htmlFor="basePricePerNight" className="block text-sm font-medium text-gray-700">
               Base Price Per Night
@@ -328,25 +327,9 @@ const PropertyEditForm = ({ property }) => {
           <h3 className="text-sm font-medium text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-3">
             Amenities
           </h3>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {[
-              { id: 'wifi', label: 'Wifi' },
-              { id: 'kitchen', label: 'Full kitchen' },
-              { id: 'washer_dryer', label: 'Washer & Dryer' },
-              { id: 'free_parking', label: 'Free Parking' },
-              { id: 'pool', label: 'Swimming Pool' },
-              { id: 'hot_tub', label: 'Hot Tub' },
-              { id: '24_7_security', label: '24/7 Security' },
-              { id: 'wheelchair_accessible', label: 'Wheelchair Accessible' },
-              { id: 'elevator_access', label: 'Elevator Access' },
-              { id: 'dishwasher', label: 'Dishwasher' },
-              { id: 'gym_fitness_center', label: 'Gym/Fitness Center' },
-              { id: 'air_conditioning', label: 'Air Conditioning' },
-              { id: 'balcony_patio', label: 'Balcony/Patio' },
-              { id: 'smart_tv', label: 'Smart TV' },
-              { id: 'coffee_maker', label: 'Coffee Maker' },
-            ].map((amenity) => (
+            {filterConfig.amenities.map((amenity) => (
               <label
                 key={amenity.id}
                 htmlFor={`amenity_${amenity.id}`}
@@ -358,7 +341,6 @@ const PropertyEditForm = ({ property }) => {
                   name="amenities"
                   value={amenity.label}
                   className="w-4 h-4 text-gray-900 border-gray-300 focus:ring-1 focus:ring-gray-900 cursor-pointer"
-                  defaultChecked={property.amenities?.includes(amenity.label)}
                 />
                 <span className="ml-3 text-sm text-gray-700 group-hover:text-gray-900">
                   {amenity.label}
@@ -373,7 +355,7 @@ const PropertyEditForm = ({ property }) => {
           <h3 className="text-sm font-medium text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-3">
             House Rules
           </h3>
-          
+
           <div className="space-y-3">
             <textarea
               id="houseRules"
@@ -391,7 +373,7 @@ const PropertyEditForm = ({ property }) => {
           <h3 className="text-sm font-medium text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-3">
             Check-in & Check-out
           </h3>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-3">
               <label htmlFor="checkInTime" className="block text-sm font-medium text-gray-700">
@@ -405,7 +387,7 @@ const PropertyEditForm = ({ property }) => {
                 defaultValue={property.checkInTime || '14:00'}
               />
             </div>
-            
+
             <div className="space-y-3">
               <label htmlFor="checkOutTime" className="block text-sm font-medium text-gray-700">
                 Check-out Time
@@ -453,13 +435,13 @@ const PropertyEditForm = ({ property }) => {
                         fill
                         className="object-cover"
                       />
-                      
+
                       {/* Drag Handle Overlay */}
                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all flex items-center justify-center">
                         <FaGripVertical className="text-white opacity-0 group-hover:opacity-100 text-2xl" />
                       </div>
                     </div>
-                    
+
                     {/* Remove Button */}
                     <button
                       type="button"
@@ -504,7 +486,7 @@ const PropertyEditForm = ({ property }) => {
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    
+
                     {/* Remove Button */}
                     <button
                       type="button"

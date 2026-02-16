@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FaChevronDown, FaChevronUp, FaTimes, FaFilter } from 'react-icons/fa';
+import { filterConfig } from '@/config/constant';
 
 const PropertyFilters = ({ initialFilters }) => {
   const router = useRouter();
@@ -25,38 +26,10 @@ const PropertyFilters = ({ initialFilters }) => {
   const [showAllAmenities, setShowAllAmenities] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const availableAmenities = [
-    { id: 'wifi', label: 'WiFi', popular: true },
-    { id: 'kitchen', label: 'Full Kitchen', popular: true },
-    { id: 'pool', label: 'Swimming Pool', popular: true },
-    { id: 'free_parking', label: 'Free Parking', popular: true },
-    { id: 'washer_dryer', label: 'Washer & Dryer' },
-    { id: 'hot_tub', label: 'Hot Tub' },
-    { id: '24_7_security', label: '24/7 Security' },
-    { id: 'wheelchair_accessible', label: 'Wheelchair Accessible' },
-    { id: 'elevator_access', label: 'Elevator Access' },
-    { id: 'dishwasher', label: 'Dishwasher' },
-    { id: 'gym_fitness_center', label: 'Gym/Fitness Center' },
-    { id: 'air_conditioning', label: 'Air Conditioning' },
-    { id: 'balcony_patio', label: 'Balcony/Patio' },
-    { id: 'smart_tv', label: 'Smart TV' },
-    { id: 'coffee_maker', label: 'Coffee Maker' },
-  ];
-
-  const propertyTypes = [
-    { id: 'entire_place', label: 'Entire Place' },
-    { id: 'private_room', label: 'Private Room' },
-    { id: 'bedspace', label: 'Bedspace' },
-  ];
-
-  const locations = [
-    { id: 'Baguio City', label: 'Baguio City' },
-    { id: 'La Trinidad', label: 'La Trinidad' },
-    { id: 'Itogon', label: 'Itogon' },
-    { id: 'Sablan', label: 'Sablan' },
-    { id: 'Tuba', label: 'Tuba' },
-    { id: 'Tublay', label: 'Tublay' },
-  ];
+  // Import filter options from config
+  const availableAmenities = filterConfig.amenities;
+  const propertyTypes = filterConfig.propertyTypes;
+  const locations = filterConfig.locations;
 
   // Update URL when filters change (but skip initial mount)
   useEffect(() => {
@@ -386,6 +359,7 @@ const PropertyFilters = ({ initialFilters }) => {
           )}
         </button>
       </div>
+
       {/* Mobile Drawer Overlay */}
       {isDrawerOpen && (
         <div
@@ -396,8 +370,9 @@ const PropertyFilters = ({ initialFilters }) => {
 
       {/* Mobile Drawer */}
       <div
-        className={`lg:hidden fixed inset-x-0 bottom-0 bg-white rounded-t-3xl shadow-2xl z-50 transform transition-transform duration-300 ease-out ${isDrawerOpen ? 'translate-y-0' : 'translate-y-full'
-          }`}
+        className={`lg:hidden fixed inset-x-0 bottom-0 bg-white rounded-t-3xl shadow-2xl z-50 transform transition-transform duration-300 ease-out ${
+          isDrawerOpen ? 'translate-y-0' : 'translate-y-full'
+        }`}
         style={{ maxHeight: '90vh' }}
       >
         {/* Drawer Header */}

@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import addProperty from '@/app/actions/addProperty';
+import { filterConfig } from '@/config/constant';
 
 const PropertyAddForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,9 +45,9 @@ const PropertyAddForm = () => {
             className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 focus:border-gray-900 focus:ring-1 focus:ring-gray-900 outline-none transition-all"
             required
           >
-            <option value="entire_place">Entire Place</option>
-            <option value="private_room">Private Room</option>
-            <option value="bedspace">Bedspace</option>
+            {filterConfig.propertyTypes.map((propertyType) => (
+              <option key={propertyType.id} value={propertyType.id}>{propertyType.label}</option>
+            ))}
           </select>
         </div>
 
@@ -55,7 +56,7 @@ const PropertyAddForm = () => {
           <h3 className="text-sm font-medium text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-3">
             Basic Information
           </h3>
-          
+
           <div className="space-y-3">
             <label htmlFor="title" className="block text-sm font-medium text-gray-700">
               Property Title
@@ -89,7 +90,7 @@ const PropertyAddForm = () => {
           <h3 className="text-sm font-medium text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-3">
             Location Details
           </h3>
-          
+
           <div className="grid grid-cols-1 gap-4">
             <div className="space-y-3">
               <label htmlFor="area" className="block text-sm font-medium text-gray-700">
@@ -101,16 +102,15 @@ const PropertyAddForm = () => {
                 className="w-full px-4 py-3 border border-gray-300 bg-white text-gray-900 focus:border-gray-900 focus:ring-1 focus:ring-gray-900 outline-none transition-all"
                 required
               >
-                <option value="">Select Area</option>
-                <option value="Baguio City">Baguio City</option>
-                <option value="La Trinidad">La Trinidad</option>
-                <option value="Itogon">Itogon</option>
-                <option value="Sablan">Sablan</option>
-                <option value="Tuba">Tuba</option>
-                <option value="Tublay">Tublay</option>
+                {filterConfig.locations.map((location) => (
+                  <option key={location.id} value={location.label}>
+                    {location.label}
+                  </option>
+                ))}
+
               </select>
             </div>
-            
+
             <div className="space-y-3">
               <label htmlFor="street" className="block text-sm font-medium text-gray-700">
                 Street Address <span className="text-gray-400 font-normal">(Optional)</span>
@@ -123,7 +123,7 @@ const PropertyAddForm = () => {
                 placeholder="Street address"
               />
             </div>
-            
+
             <div className="space-y-3">
               <label htmlFor="landmark" className="block text-sm font-medium text-gray-700">
                 Nearby Landmark <span className="text-gray-400 font-normal">(Optional)</span>
@@ -144,7 +144,7 @@ const PropertyAddForm = () => {
           <h3 className="text-sm font-medium text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-3">
             Property Specifications
           </h3>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="space-y-3">
               <label htmlFor="maxGuests" className="block text-sm font-medium text-gray-700">
@@ -159,7 +159,7 @@ const PropertyAddForm = () => {
                 required
               />
             </div>
-            
+
             <div className="space-y-3">
               <label htmlFor="bedrooms" className="block text-sm font-medium text-gray-700">
                 Bedrooms
@@ -173,7 +173,7 @@ const PropertyAddForm = () => {
                 defaultValue="0"
               />
             </div>
-            
+
             <div className="space-y-3">
               <label htmlFor="beds" className="block text-sm font-medium text-gray-700">
                 Beds
@@ -187,7 +187,7 @@ const PropertyAddForm = () => {
                 required
               />
             </div>
-            
+
             <div className="space-y-3">
               <label htmlFor="bathrooms" className="block text-sm font-medium text-gray-700">
                 Bathrooms
@@ -210,7 +210,7 @@ const PropertyAddForm = () => {
           <h3 className="text-sm font-medium text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-3">
             Pricing
           </h3>
-          
+
           <div className="space-y-3 max-w-md">
             <label htmlFor="basePricePerNight" className="block text-sm font-medium text-gray-700">
               Base Price Per Night
@@ -236,25 +236,9 @@ const PropertyAddForm = () => {
           <h3 className="text-sm font-medium text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-3">
             Amenities
           </h3>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {[
-              { id: 'wifi', label: 'Wifi' },
-              { id: 'kitchen', label: 'Full kitchen' },
-              { id: 'washer_dryer', label: 'Washer & Dryer' },
-              { id: 'free_parking', label: 'Free Parking' },
-              { id: 'pool', label: 'Swimming Pool' },
-              { id: 'hot_tub', label: 'Hot Tub' },
-              { id: '24_7_security', label: '24/7 Security' },
-              { id: 'wheelchair_accessible', label: 'Wheelchair Accessible' },
-              { id: 'elevator_access', label: 'Elevator Access' },
-              { id: 'dishwasher', label: 'Dishwasher' },
-              { id: 'gym_fitness_center', label: 'Gym/Fitness Center' },
-              { id: 'air_conditioning', label: 'Air Conditioning' },
-              { id: 'balcony_patio', label: 'Balcony/Patio' },
-              { id: 'smart_tv', label: 'Smart TV' },
-              { id: 'coffee_maker', label: 'Coffee Maker' },
-            ].map((amenity) => (
+            {filterConfig.amenities.map((amenity) => (
               <label
                 key={amenity.id}
                 htmlFor={`amenity_${amenity.id}`}
@@ -280,7 +264,7 @@ const PropertyAddForm = () => {
           <h3 className="text-sm font-medium text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-3">
             House Rules
           </h3>
-          
+
           <div className="space-y-3">
             <textarea
               id="houseRules"
@@ -297,7 +281,7 @@ const PropertyAddForm = () => {
           <h3 className="text-sm font-medium text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-3">
             Check-in & Check-out
           </h3>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-3">
               <label htmlFor="checkInTime" className="block text-sm font-medium text-gray-700">
@@ -311,7 +295,7 @@ const PropertyAddForm = () => {
                 defaultValue="14:00"
               />
             </div>
-            
+
             <div className="space-y-3">
               <label htmlFor="checkOutTime" className="block text-sm font-medium text-gray-700">
                 Check-out Time
@@ -332,7 +316,7 @@ const PropertyAddForm = () => {
           <h3 className="text-sm font-medium text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-3">
             Property Images
           </h3>
-          
+
           <div className="space-y-3">
             <label htmlFor="images" className="block text-sm font-medium text-gray-700">
               Upload Images <span className="text-gray-500 font-normal">(Maximum 4)</span>
