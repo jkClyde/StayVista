@@ -6,7 +6,7 @@ import { FaChevronDown, FaChevronUp, FaTimes, FaFilter } from 'react-icons/fa';
 const PropertyFilters = ({ initialFilters }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   const [filters, setFilters] = useState({
     minPrice: initialFilters?.minPrice || '',
     maxPrice: initialFilters?.maxPrice || '',
@@ -77,7 +77,7 @@ const PropertyFilters = ({ initialFilters }) => {
     }
 
     const params = new URLSearchParams(searchParams);
-    
+
     // Remove old filter params
     params.delete('minPrice');
     params.delete('maxPrice');
@@ -85,7 +85,7 @@ const PropertyFilters = ({ initialFilters }) => {
     params.delete('amenities');
     params.delete('propertyType');
     params.delete('location');
-    
+
     // Add new filter params
     if (filters.minPrice) params.set('minPrice', filters.minPrice);
     if (filters.maxPrice) params.set('maxPrice', filters.maxPrice);
@@ -96,7 +96,7 @@ const PropertyFilters = ({ initialFilters }) => {
 
     // Reset to page 1 when filters change
     params.set('page', '1');
-    
+
     router.push(`?${params.toString()}`, { scroll: false });
   }, [filters, router, searchParams, initialFilters]);
 
@@ -179,7 +179,7 @@ const PropertyFilters = ({ initialFilters }) => {
     filters.propertyType.length > 0 ||
     filters.location.length > 0;
 
-  const activeFilterCount = 
+  const activeFilterCount =
     (filters.minPrice ? 1 : 0) +
     (filters.maxPrice ? 1 : 0) +
     (filters.bedrooms > 0 ? 1 : 0) +
@@ -375,19 +375,17 @@ const PropertyFilters = ({ initialFilters }) => {
       <div className='lg:hidden fixed bottom-6 right-6 z-40'>
         <button
           onClick={() => setIsDrawerOpen(true)}
-          className='flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-500 text-white rounded-full shadow-lg transition-all duration-200 hover:shadow-xl'
+          className='flex items-center gap-2 px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-full shadow-lg transition-all duration-200 hover:shadow-xl'
         >
           <FaFilter className='text-sm' />
           <span className='font-medium'>Filters</span>
           {activeFilterCount > 0 && (
-            <span className='ml-1 px-2 py-0.5 bg-blue-500 text-white text-xs font-bold rounded-full'>
+            <span className='ml-1 px-2 py-0.5 bg-white text-rose-600 text-xs font-bold rounded-full'>
               {activeFilterCount}
             </span>
           )}
         </button>
-
       </div>
-
       {/* Mobile Drawer Overlay */}
       {isDrawerOpen && (
         <div
@@ -398,9 +396,8 @@ const PropertyFilters = ({ initialFilters }) => {
 
       {/* Mobile Drawer */}
       <div
-        className={`lg:hidden fixed inset-x-0 bottom-0 bg-white rounded-t-3xl shadow-2xl z-50 transform transition-transform duration-300 ease-out ${
-          isDrawerOpen ? 'translate-y-0' : 'translate-y-full'
-        }`}
+        className={`lg:hidden fixed inset-x-0 bottom-0 bg-white rounded-t-3xl shadow-2xl z-50 transform transition-transform duration-300 ease-out ${isDrawerOpen ? 'translate-y-0' : 'translate-y-full'
+          }`}
         style={{ maxHeight: '90vh' }}
       >
         {/* Drawer Header */}
