@@ -21,20 +21,30 @@ const PropertySearchForm = () => {
 
     const queryParams = new URLSearchParams();
     
-    if (location) queryParams.append('location', location);
+    // Location filter - maps to your PropertyFilters
+    if (location) {
+      queryParams.append('location', location);
+    }
+    
+    // Date filters
     if (checkIn) queryParams.append('checkIn', checkIn);
     if (checkOut) queryParams.append('checkOut', checkOut);
+    
+    // Guest counts
     if (adults) queryParams.append('adults', adults);
     if (children) queryParams.append('children', children);
     if (infants) queryParams.append('infants', infants);
-    if (rooms) queryParams.append('rooms', rooms);
+    
+    // Rooms filter - maps to bedrooms in your filter
+    if (rooms) queryParams.append('bedrooms', rooms);
 
     const query = queryParams.toString();
     
+    // Always navigate to /listings with or without query params
     if (query) {
-      router.push(`/properties/search-results?${query}`);
+      router.push(`/listings?${query}`);
     } else {
-      router.push('/properties');
+      router.push('/listings');
     }
   };
 

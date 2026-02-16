@@ -16,7 +16,10 @@ const PropertiesPage = async ({ searchParams }) => {
     bedrooms: params.bedrooms ? Number(params.bedrooms) : 0,
     amenities: params.amenities ? params.amenities.split(',') : [],
     propertyType: params.propertyType ? params.propertyType.split(',') : [],
-    location: params.location ? params.location.split(',') : [],
+    location: params.location ? (typeof params.location === 'string' ? params.location.split(',') : []) : [],
+    adults: params.adults ? Number(params.adults) : 1,
+    children: params.children ? Number(params.children) : 0,
+    infants: params.infants ? Number(params.infants) : 0,
   };
 
   await connectDB();
@@ -55,9 +58,21 @@ const PropertiesPage = async ({ searchParams }) => {
     query.amenities = { $all: filters.amenities };
   }
 
+  // Guest capacity filter (total guests)
+  const totalGuests = filters.adults + filters.children + filters.infants;
+  if (totalGuests > 0) {
+    // Assuming your Property model has a maxGuests field
+    query.maxGuests = { $gte: totalGuests };
+  }
+
+  // Date range info (for display purposes - not used in query unless you have booking system)
+  const checkIn = params.checkIn || '';
+  const checkOut = params.checkOut || '';
+
   // Log query for debugging (remove in production)
   console.log('MongoDB Query:', JSON.stringify(query, null, 2));
   console.log('Filters:', filters);
+  console.log('Check-in:', checkIn, 'Check-out:', checkOut);
 
   const skip = (page - 1) * pageSize;
 
@@ -93,6 +108,27 @@ const PropertiesPage = async ({ searchParams }) => {
                   ({total} {total === 1 ? 'property' : 'properties'})
                 </span>
               </h1>
+              
+              {/* Search Info Display */}
+              {(checkIn || checkOut || totalGuests > 0) && (
+                <div className='mt-3 flex flex-wrap gap-2'>
+                  {checkIn && (
+                    <span className='inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800'>
+                      Check-in: {new Date(checkIn).toLocaleDateString()}
+                    </span>
+                  )}
+                  {checkOut && (
+                    <span className='inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800'>
+                      Check-out: {new Date(checkOut).toLocaleDateString()}
+                    </span>
+                  )}
+                  {totalGuests > 0 && (
+                    <span className='inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800'>
+                      {totalGuests} {totalGuests === 1 ? 'Guest' : 'Guests'}
+                    </span>
+                  )}
+                </div>
+              )}
               
               {/* Debug info - remove in production */}
               {process.env.NODE_ENV === 'development' && Object.keys(query).length > 0 && (
