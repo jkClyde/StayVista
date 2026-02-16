@@ -1,15 +1,19 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
-const PropertyFilters = ({ onFilterChange }) => {
+const PropertyFilters = ({ initialFilters }) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
   const [filters, setFilters] = useState({
-    minPrice: '',
-    maxPrice: '',
-    bedrooms: 0,
-    amenities: [],
-    propertyType: [],
-    location: [],
+    minPrice: initialFilters?.minPrice || '',
+    maxPrice: initialFilters?.maxPrice || '',
+    bedrooms: initialFilters?.bedrooms || 0,
+    amenities: initialFilters?.amenities || [],
+    propertyType: initialFilters?.propertyType || [],
+    location: initialFilters?.location || [],
   });
 
   const [expandedSections, setExpandedSections] = useState({
@@ -53,11 +57,22 @@ const PropertyFilters = ({ onFilterChange }) => {
     { id: 'Tublay', label: 'Tublay' },
   ];
 
+  // Update URL when filters change
   useEffect(() => {
-    if (onFilterChange) {
-      onFilterChange(filters);
-    }
-  }, [filters]);
+    const params = new URLSearchParams();
+    
+    if (filters.minPrice) params.set('minPrice', filters.minPrice);
+    if (filters.maxPrice) params.set('maxPrice', filters.maxPrice);
+    if (filters.bedrooms > 0) params.set('bedrooms', filters.bedrooms);
+    if (filters.amenities.length > 0) params.set('amenities', filters.amenities.join(','));
+    if (filters.propertyType.length > 0) params.set('propertyType', filters.propertyType.join(','));
+    if (filters.location.length > 0) params.set('location', filters.location.join(','));
+
+    // Reset to page 1 when filters change
+    params.set('page', '1');
+    
+    router.push(`/listings?${params.toString()}`, { scroll: false });
+  }, [filters, router]);
 
   const toggleSection = (section) => {
     setExpandedSections((prev) => ({
