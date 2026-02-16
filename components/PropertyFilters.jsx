@@ -375,7 +375,7 @@ const PropertyFilters = ({ initialFilters }) => {
       <div className='lg:hidden fixed bottom-6 right-6 z-40'>
         <button
           onClick={() => setIsDrawerOpen(true)}
-          className='flex items-center gap-2 px-6 py-3 bg-gray-900 hover:bg-gray-800 text-white rounded-full shadow-lg transition-all duration-200 hover:shadow-xl'
+          className='flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-500 text-white rounded-full shadow-lg transition-all duration-200 hover:shadow-xl'
         >
           <FaFilter className='text-sm' />
           <span className='font-medium'>Filters</span>
@@ -385,6 +385,7 @@ const PropertyFilters = ({ initialFilters }) => {
             </span>
           )}
         </button>
+
       </div>
 
       {/* Mobile Drawer Overlay */}
