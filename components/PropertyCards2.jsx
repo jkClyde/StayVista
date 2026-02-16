@@ -173,7 +173,7 @@ const PropertyCard2 = ({ property }) => {
             </div>
 
             {/* Right Side - Price */}
-            <div className='lg:ml-8 mt-6 lg:mt-0 flex flex-col items-end'>
+            <div className='lg:ml-8 mt-6 lg:mt-0 flex lg:flex-col items-center lg:items-end justify-between'>
               <div className='text-right mb-4'>
                 <div className='text-3xl font-bold text-gray-900 mb-1'>
                   {pricePerNight
