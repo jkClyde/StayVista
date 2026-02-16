@@ -448,12 +448,12 @@ const PropertyFilters = ({ initialFilters = {} }) => {
         </div>
 
         {/* Debug Info - Remove this in production */}
-        {process.env.NODE_ENV === 'development' && (
+        {/* {process.env.NODE_ENV === 'development' && (
           <div className='bg-gray-100 p-3 rounded text-xs'>
             <div className='font-semibold mb-1'>Active Filters:</div>
             <pre className='overflow-auto'>{JSON.stringify(filters, null, 2)}</pre>
           </div>
-        )}
+        )} */}
       </div>
     </aside>
   );

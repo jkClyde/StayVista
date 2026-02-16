@@ -130,12 +130,7 @@ const PropertiesPage = async ({ searchParams }) => {
                 </div>
               )}
               
-              {/* Debug info - remove in production */}
-              {process.env.NODE_ENV === 'development' && Object.keys(query).length > 0 && (
-                <div className='mt-2 text-sm text-gray-600'>
-                  Active filters detected - Check console for query details
-                </div>
-              )}
+            
             </div>
 
             {/* Property List */}
