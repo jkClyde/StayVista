@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { FaGoogle } from 'react-icons/fa';
 import logo from '@/public/images/logo-white.png';
 import profileDefault from '@/public/images/profile.png';
-import { signIn, signOut, useSession, getProviders } from 'next-auth/react';
+import { signIn, signOut, useSession } from 'next-auth/react'; // Remove getProviders
 
 
 const Navbar = () => {
@@ -15,18 +15,11 @@ const Navbar = () => {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [providers, setProviders] = useState(null);
+  // Remove providers state - not needed anymore
 
   const pathname = usePathname();
 
   useEffect(() => {
-    const setAuthProviders = async () => {
-      const res = await getProviders();
-      setProviders(res);
-    };
-
-    setAuthProviders();
-
     // NOTE: close mobile menu if the viewport size is changed
     window.addEventListener('resize', () => {
       setIsMobileMenuOpen(false);
@@ -104,7 +97,7 @@ const Navbar = () => {
                 {session && (
                   <Link
                     href='/bookings'
-                    className={`${pathname === '/listings/add' ? 'bg-black' : ''
+                    className={`${pathname === '/bookings' ? 'bg-black' : ''
                       } text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2`}
                   >
                     Bookings
@@ -115,23 +108,16 @@ const Navbar = () => {
           </div>
 
           {/* <!-- Right Side Menu (Logged Out) --> */}
-
-    
-
           {!session && (
             <div className='block md:ml-6'>
               <div className='flex items-center'>
-                {providers &&
-                  Object.values(providers).map((provider) => (
-                    <button
-                      key={provider.name}
-                      onClick={() => signIn(provider.id)}
-                      className='flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 my-3'
-                    >
-                      <FaGoogle className='text-white mr-2' />
-                      <span>Login or Register</span>
-                    </button>
-                  ))}
+                <button
+                  onClick={() => signIn('google')}
+                  className='flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 my-3'
+                >
+                  <FaGoogle className='text-white mr-2' />
+                  <span>Login or Register</span>
+                </button>
               </div>
             </div>
           )}
@@ -240,10 +226,6 @@ const Navbar = () => {
         </div>
       </div>
 
-
-
-
-      {/* <!-- Mobile menu, show/hide based on menu state. --> */}
       {/* <!-- Mobile menu, show/hide based on menu state. --> */}
       {isMobileMenuOpen && (
         <div id='mobile-menu' className='absolute top-full left-0 right-0 bg-[#1A1E43] w-full'>
@@ -277,9 +259,6 @@ const Navbar = () => {
           </div>
         </div>
       )}
-
-
-
     </nav>
   );
 };
