@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useState } from 'react';
 import Image from 'next/image';
@@ -10,24 +10,40 @@ import {
   FaMapMarkerAlt,
   FaChevronLeft,
   FaChevronRight,
+  FaCalendarAlt,
 } from 'react-icons/fa';
 import FavoriteButton from './FavoriteButton';
 
-const PropertyCard2 = ({ property }) => {
+const PropertyCard2 = ({ property, checkIn = '', checkOut = '' }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const images = property.images || [];
   const hasMultipleImages = images.length > 1;
 
-  // Handle both old and new schema
-  const propertyName = property.title || property.name;
-  const propertyType = property.propertyType || property.type;
-  const bathrooms = property.bathrooms || property.baths;
-  const locationCity = property.location?.area || property.location?.city;
+  // ── Schema compatibility ─────────────────────────────────────────────────
+  const propertyName  = property.title || property.name;
+  const propertyType  = property.propertyType || property.type;
+  const bathrooms     = property.bathrooms || property.baths;
+  const locationCity  = property.location?.area || property.location?.city;
   const locationState = property.location?.state;
-
-  // NIGHTLY ONLY
   const pricePerNight = property.basePricePerNight || property.rates?.nightly;
 
+  // ── Date calculation ─────────────────────────────────────────────────────
+  const hasDateRange = Boolean(checkIn && checkOut);
+  let totalNights = 0;
+  let totalPrice  = null;
+
+  if (hasDateRange && pricePerNight) {
+    const msPerDay  = 1000 * 60 * 60 * 24;
+    totalNights     = Math.ceil((new Date(checkOut) - new Date(checkIn)) / msPerDay);
+    totalPrice      = totalNights > 0 ? totalNights * pricePerNight : null;
+  }
+
+  // ── Link: pass dates along so the listing page can pre-fill the form ─────
+  const dateQuery =
+    hasDateRange ? `?checkIn=${checkIn}&checkOut=${checkOut}` : '';
+  const listingHref = `/listings/${property._id}${dateQuery}`;
+
+  // ── Carousel helpers ─────────────────────────────────────────────────────
   const nextImage = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -49,8 +65,8 @@ const PropertyCard2 = ({ property }) => {
   return (
     <div className='bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden'>
       <div className='flex flex-col lg:flex-row'>
-        
-        {/* Property Image Carousel */}
+
+        {/* ── Image carousel ────────────────────────────────────────────── */}
         <div className='relative lg:w-80 h-64 lg:h-auto flex-shrink-0 group'>
           {images.length > 0 ? (
             <Image
@@ -65,18 +81,20 @@ const PropertyCard2 = ({ property }) => {
             </div>
           )}
 
-          {/* Property Type Badge */}
+          {/* Property type badge */}
           <div className='absolute top-4 left-4 flex gap-2'>
             {propertyType && (
               <span className='px-3 py-1.5 rounded-md text-xs font-semibold bg-gray-900 text-white shadow-sm'>
-                {propertyType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                {propertyType
+                  .replace(/_/g, ' ')
+                  .replace(/\b\w/g, (l) => l.toUpperCase())}
               </span>
             )}
           </div>
 
           <FavoriteButton property={property} />
 
-          {/* Navigation Arrows */}
+          {/* Arrows */}
           {hasMultipleImages && (
             <>
               <button
@@ -94,7 +112,7 @@ const PropertyCard2 = ({ property }) => {
             </>
           )}
 
-          {/* Image Indicators */}
+          {/* Dot indicators */}
           {images.length > 0 && (
             <div className='absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-1.5'>
               {images.slice(0, 5).map((_, i) => (
@@ -102,8 +120,8 @@ const PropertyCard2 = ({ property }) => {
                   key={i}
                   onClick={(e) => goToImage(i, e)}
                   className={`w-1.5 h-1.5 rounded-full transition-all duration-200 ${
-                    i === currentImageIndex 
-                      ? 'bg-white w-4' 
+                    i === currentImageIndex
+                      ? 'bg-white w-4'
                       : 'bg-white/50 hover:bg-white/75'
                   }`}
                 />
@@ -117,11 +135,11 @@ const PropertyCard2 = ({ property }) => {
           )}
         </div>
 
-        {/* Property Details */}
+        {/* ── Property details ───────────────────────────────────────────── */}
         <div className='flex-1 p-6 lg:p-8'>
           <div className='flex flex-col lg:flex-row lg:items-start lg:justify-between h-full'>
-            
-            {/* Left Side */}
+
+            {/* Left side */}
             <div className='flex-1'>
               <h2 className='text-2xl font-bold text-gray-900 mb-2'>
                 {propertyName}
@@ -132,7 +150,8 @@ const PropertyCard2 = ({ property }) => {
                 <span className='text-sm'>
                   {locationCity}
                   {locationState && `, ${locationState}`}
-                  {property.location?.landmark && ` - Near ${property.location.landmark}`}
+                  {property.location?.landmark &&
+                    ` - Near ${property.location.landmark}`}
                 </span>
               </div>
 
@@ -170,27 +189,61 @@ const PropertyCard2 = ({ property }) => {
                   {property.description}
                 </p>
               )}
+
+              {/* ── Date-range summary (only shown when dates are selected) ── */}
+              {hasDateRange && totalNights > 0 && (
+                <div className='mt-3 inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 border border-blue-100 rounded-lg text-sm text-blue-700'>
+                  <FaCalendarAlt className='text-blue-400 text-xs' />
+                  <span>
+                    {new Date(checkIn).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                    })}{' '}
+                    →{' '}
+                    {new Date(checkOut).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </span>
+                  <span className='text-blue-400'>·</span>
+                  <span>
+                    {totalNights} night{totalNights > 1 ? 's' : ''}
+                  </span>
+                </div>
+              )}
             </div>
 
-            {/* Right Side - Price */}
-            <div className='lg:ml-8 mt-6 lg:mt-0 flex lg:flex-col items-center lg:items-end justify-between gap-[15px]'>
-              <div className='text-right mb-0 md:mb-4'>
-                <div className='text-3xl font-bold text-gray-900 mb-1'>
+            {/* Right side – price + CTA */}
+            <div className='lg:ml-8 mt-6 lg:mt-0 flex lg:flex-col items-center lg:items-end justify-between gap-4'>
+              <div className='text-right'>
+                {/* Per-night rate */}
+                <div className='text-3xl font-bold text-gray-900 mb-0.5'>
                   {pricePerNight
                     ? `₱${pricePerNight.toLocaleString()}`
                     : 'Contact for rates'}
                 </div>
-                <div className='text-xs text-gray-500'>
-                  {pricePerNight && 'Per Night'}
+                <div className='text-xs text-gray-500 mb-1'>
+                  {pricePerNight && 'per night'}
                 </div>
+
+                {/* Total when dates are selected */}
+                {totalPrice !== null && totalNights > 0 && (
+                  <div className='text-sm font-semibold text-gray-700 bg-gray-50 rounded-lg px-3 py-1.5 border border-gray-200'>
+                    ₱{totalPrice.toLocaleString()}
+                    <span className='font-normal text-gray-500'>
+                      {' '}
+                      total
+                    </span>
+                  </div>
+                )}
               </div>
 
               <Link
-                href={`/listings/${property._id}`}
-                className='inline-flex items-center justify-center gap-2 px-[15px] md:px-8 py-3 bg-black hover:bg-gray-800 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md'
+                href={listingHref}
+                className='inline-flex items-center justify-center gap-2 px-4 md:px-8 py-3 bg-black hover:bg-gray-800 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md whitespace-nowrap'
               >
-                View Details
-                <span class="hidden md:block">→</span>
+                {hasDateRange ? 'Book Now' : 'View Details'}
+                <span className='hidden md:block'>→</span>
               </Link>
             </div>
 
