@@ -173,8 +173,8 @@ const PropertyCard2 = ({ property }) => {
             </div>
 
             {/* Right Side - Price */}
-            <div className='lg:ml-8 mt-6 lg:mt-0 flex lg:flex-col items-center lg:items-end justify-between'>
-              <div className='text-right mb-4'>
+            <div className='lg:ml-8 mt-6 lg:mt-0 flex lg:flex-col items-center lg:items-end justify-between gap-[15px]'>
+              <div className='text-right mb-0 md:mb-4'>
                 <div className='text-3xl font-bold text-gray-900 mb-1'>
                   {pricePerNight
                     ? `₱${pricePerNight.toLocaleString()}`
@@ -187,10 +187,10 @@ const PropertyCard2 = ({ property }) => {
 
               <Link
                 href={`/listings/${property._id}`}
-                className='inline-flex items-center justify-center gap-2 px-8 py-3 bg-black hover:bg-gray-800 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md'
+                className='inline-flex items-center justify-center gap-2 px-[15px] md:px-8 py-3 bg-black hover:bg-gray-800 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md'
               >
                 View Details
-                <span>→</span>
+                <span class="hidden md:block">→</span>
               </Link>
             </div>
 
