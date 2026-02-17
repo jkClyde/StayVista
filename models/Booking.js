@@ -40,11 +40,23 @@ const BookingSchema = new Schema(
     },
     payment_status: {
       type: String,
-      enum: ['unpaid', 'paid', 'refunded'],
+      // unpaid            → just booked, hasn't paid yet
+      // reference_submitted → guest sent ref number, waiting for owner to verify
+      // verified           → owner confirmed the payment
+      // refunded           → owner issued a refund
+      enum: ['unpaid', 'reference_submitted', 'verified', 'refunded'],
       default: 'unpaid',
     },
-    payment_intent_id: {
-      type: String, // Stripe payment intent ID — populate once payment is processed
+    // GCash or Maya reference number submitted by the guest
+    payment_reference: {
+      type: String,
+      default: '',
+    },
+    // Which app they paid with
+    payment_method: {
+      type: String,
+      enum: ['gcash', 'maya', ''],
+      default: '',
     },
     guests: {
       type: Number,
@@ -59,7 +71,6 @@ const BookingSchema = new Schema(
   }
 );
 
-// Compound index to speed up overlap queries per property
 BookingSchema.index({ property: 1, check_in: 1, check_out: 1 });
 
 const Booking = models.Booking || model('Booking', BookingSchema);
