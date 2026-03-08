@@ -1,26 +1,35 @@
 import Image from 'next/image';
 import connectDB from '@/config/database';
 import Property from '@/models/Property';
+import User from '@/models/User';
 import { getSessionUser } from '@/utils/getSessionUser';
 import profileDefault from '@/assets/images/profile.png';
 import ProfileProperties from '@/components/ProfileProperties';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
-import { FaHome, FaEnvelope, FaUser } from 'react-icons/fa';
+import { FaHome, FaEnvelope, FaUser, FaBookmark } from 'react-icons/fa';
 import Link from 'next/link';
 
 const ProfilePage = async () => {
   await connectDB();
 
   const sessionUser = await getSessionUser();
-
   const { userId } = sessionUser;
 
   if (!userId) {
     throw new Error('User ID is required');
   }
 
+  const dbUser = await User.findById(userId).lean();
+  const isAdmin = dbUser?.isAdmin ?? false;
+
   const propertiesDocs = await Property.find({ owner: userId }).lean();
   const properties = propertiesDocs.map(convertToSerializeableObject);
+
+  // Fetch bookmarks if not admin
+  const bookmarkDocs = !isAdmin
+    ? await Property.find({ _id: { $in: dbUser.bookmarks } }).lean()
+    : [];
+  const bookmarks = bookmarkDocs.map(convertToSerializeableObject);
 
   return (
     <div className='min-h-screen bg-gradient-to-b from-gray-50 to-white'>
@@ -37,7 +46,6 @@ const ProfilePage = async () => {
           {/* Sidebar - Profile Info */}
           <aside className='lg:col-span-1'>
             <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6 sticky top-24'>
-              {/* Profile Picture */}
               <div className='flex flex-col items-center mb-6'>
                 <div className='relative mb-4'>
                   <Image
@@ -52,10 +60,11 @@ const ProfilePage = async () => {
                 <h2 className='text-xl font-bold text-gray-900 text-center'>
                   {sessionUser.user.name}
                 </h2>
-                <p className='text-sm text-gray-500 mt-1'>Property Owner</p>
+                <p className='text-sm text-gray-500 mt-1'>
+                  {isAdmin ? 'Administrator' : 'Member'}
+                </p>
               </div>
 
-              {/* Contact Info */}
               <div className='space-y-4 pt-6 border-t border-gray-200'>
                 <div className='flex items-start gap-3'>
                   <FaUser className='text-gray-400 mt-1 flex-shrink-0' />
@@ -66,7 +75,7 @@ const ProfilePage = async () => {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className='flex items-start gap-3'>
                   <FaEnvelope className='text-gray-400 mt-1 flex-shrink-0' />
                   <div className='flex-1 min-w-0'>
@@ -78,11 +87,17 @@ const ProfilePage = async () => {
                 </div>
 
                 <div className='flex items-start gap-3'>
-                  <FaHome className='text-gray-400 mt-1 flex-shrink-0' />
+                  {isAdmin ? (
+                    <FaHome className='text-gray-400 mt-1 flex-shrink-0' />
+                  ) : (
+                    <FaBookmark className='text-gray-400 mt-1 flex-shrink-0' />
+                  )}
                   <div className='flex-1 min-w-0'>
-                    <p className='text-xs text-gray-500 uppercase tracking-wide'>Total Listings</p>
+                    <p className='text-xs text-gray-500 uppercase tracking-wide'>
+                      {isAdmin ? 'Total Listings' : 'Bookmarks'}
+                    </p>
                     <p className='text-2xl font-bold text-[#1A1E43]'>
-                      {properties.length}
+                      {isAdmin ? properties.length : bookmarks.length}
                     </p>
                   </div>
                 </div>
@@ -90,48 +105,80 @@ const ProfilePage = async () => {
             </div>
           </aside>
 
-          {/* Main Content - Property Listings */}
+          {/* Main Content */}
           <main className='lg:col-span-3'>
             <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
-              <div className='flex items-center justify-between mb-6'>
-                <div>
-                  <h2 className='text-2xl font-bold text-gray-900'>Your Listings</h2>
-                  <p className='text-gray-500 mt-1'>
-                    {properties.length === 0
-                      ? 'No properties yet'
-                      : `${properties.length} ${properties.length === 1 ? 'property' : 'properties'}`}
-                  </p>
-                </div>
-                <Link
-                  href='/listings/add'
-                  className='bg-[#1A1E43] hover:bg-[#303879] text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-flex items-center gap-2'
-                >
-                  <FaHome />
-                  Add Property
-                </Link>
-              </div>
-
-              {properties.length === 0 ? (
-                <div className='text-center py-16'>
-                  <div className='inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4'>
-                    <FaHome className='text-4xl text-gray-400' />
+              {isAdmin ? (
+                // Admin: show listings
+                <>
+                  <div className='flex items-center justify-between mb-6'>
+                    <div>
+                      <h2 className='text-2xl font-bold text-gray-900'>Your Listings</h2>
+                      <p className='text-gray-500 mt-1'>
+                        {properties.length === 0
+                          ? 'No properties yet'
+                          : `${properties.length} ${properties.length === 1 ? 'property' : 'properties'}`}
+                      </p>
+                    </div>
+                    <Link
+                      href='/listings/add'
+                      className='bg-[#1A1E43] hover:bg-[#303879] text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-flex items-center gap-2'
+                    >
+                      <FaHome />
+                      Add Property
+                    </Link>
                   </div>
-                  <h3 className='text-xl font-semibold text-gray-900 mb-2'>
-                    No listings yet
-                  </h3>
-                  <p className='text-gray-500 mb-6'>
-                    Start by adding your first property listing
-                  </p>
-                  <Link
-                    href='/listings/add'
-                    className='bg-[#1A1E43] hover:bg-[#303879] text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-flex items-center gap-2'
-                  >
-                    <FaHome />
-                    Add Your First Property
-                  </Link>
-                </div>
+
+                  {properties.length === 0 ? (
+                    <div className='text-center py-16'>
+                      <div className='inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4'>
+                        <FaHome className='text-4xl text-gray-400' />
+                      </div>
+                      <h3 className='text-xl font-semibold text-gray-900 mb-2'>No listings yet</h3>
+                      <p className='text-gray-500 mb-6'>Start by adding your first property listing</p>
+                      <Link
+                        href='/listings/add'
+                        className='bg-[#1A1E43] hover:bg-[#303879] text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-flex items-center gap-2'
+                      >
+                        <FaHome />
+                        Add Your First Property
+                      </Link>
+                    </div>
+                  ) : (
+                    <ProfileProperties properties={properties} />
+                  )}
+                </>
               ) : (
-                <ProfileProperties properties={properties} />
+                // Non-admin: show bookmarks
+                <>
+                  <div className='mb-6'>
+                    <h2 className='text-2xl font-bold text-gray-900'>Your Bookmarks</h2>
+                    <p className='text-gray-500 mt-1'>
+                      {bookmarks.length === 0
+                        ? 'No bookmarks yet'
+                        : `${bookmarks.length} saved ${bookmarks.length === 1 ? 'property' : 'properties'}`}
+                    </p>
+                  </div>
+
+                  {bookmarks.length === 0 ? (
+                    <div className='text-center py-16'>
+                      <div className='inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4'>
+                        <FaBookmark className='text-4xl text-gray-400' />
+                      </div>
+                      <h3 className='text-xl font-semibold text-gray-900 mb-2'>No bookmarks yet</h3>
+                      <p className='text-gray-500 mb-6'>Save properties you like to view them here</p>
+                      <Link
+                        href='/listings'
+                        className='bg-[#1A1E43] hover:bg-[#303879] text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-flex items-center gap-2'
+                      >
+                        <FaHome />
+                        Browse Listings
+                      </Link>
+                    </div>
+                  ) : (
+                    <ProfileProperties properties={bookmarks} />
+                  )}
+                </>
               )}
             </div>
           </main>

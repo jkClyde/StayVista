@@ -33,6 +33,7 @@ export const authOptions = {
           email: profile.email,
           username,
           image: profile.picture,
+          isAdmin: false,
         });
       }
       // 4. Return true to allow sign in
@@ -45,6 +46,8 @@ export const authOptions = {
       // 2. Assign the user id to the session
       session.user.id = user._id.toString();
       // 3. return session
+      session.user.isAdmin = user.isAdmin;  // ✅ add this
+
       return session;
     },
   },

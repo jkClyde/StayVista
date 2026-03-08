@@ -19,6 +19,8 @@ const Navbar = () => {
 
   const pathname = usePathname();
 
+  console.log("Session:", session)
+
   useEffect(() => {
     // NOTE: close mobile menu if the viewport size is changed
     window.addEventListener('resize', () => {
@@ -85,7 +87,7 @@ const Navbar = () => {
                 >
                   Listings
                 </Link>
-                {session && (
+                {session && session?.user?.isAdmin && (
                   <Link
                     href='/listings/add'
                     className={`${pathname === '/listings/add' ? 'bg-black' : ''
