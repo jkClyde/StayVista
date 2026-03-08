@@ -1,5 +1,6 @@
 import connectDB from '@/config/database';
 import Property from '@/models/Property';
+import Booking from '@/models/Booking';
 import Pagination from '@/components/Pagination';
 import PropertyFilters from '@/components/PropertyFilters';
 import PropertyList from '@/components/PropertyList';
@@ -9,87 +10,100 @@ const PropertiesPage = async ({ searchParams }) => {
   const pageSize = params.pageSize ? parseInt(params.pageSize) : 10;
   const page = params.page ? parseInt(params.page) : 1;
 
+  const checkIn  = params.checkIn  || '';
+  const checkOut = params.checkOut || '';
+
   // Parse filters from URL
   const filters = {
-    minPrice: params.minPrice ? Number(params.minPrice) : '',
-    maxPrice: params.maxPrice ? Number(params.maxPrice) : '',
-    bedrooms: params.bedrooms ? Number(params.bedrooms) : 0,
-    amenities: params.amenities ? params.amenities.split(',') : [],
+    minPrice:     params.minPrice     ? Number(params.minPrice)  : '',
+    maxPrice:     params.maxPrice     ? Number(params.maxPrice)  : '',
+    bedrooms:     params.bedrooms     ? Number(params.bedrooms)  : 0,
+    amenities:    params.amenities    ? params.amenities.split(',')    : [],
     propertyType: params.propertyType ? params.propertyType.split(',') : [],
-    location: params.location ? (typeof params.location === 'string' ? params.location.split(',') : []) : [],
-    adults: params.adults ? Number(params.adults) : 1,
+    location:     params.location
+      ? (typeof params.location === 'string' ? params.location.split(',') : [])
+      : [],
+    adults:   params.adults   ? Number(params.adults)   : 1,
     children: params.children ? Number(params.children) : 0,
-    infants: params.infants ? Number(params.infants) : 0,
+    infants:  params.infants  ? Number(params.infants)  : 0,
   };
 
   await connectDB();
-  
-  // Build MongoDB query based on filters
+
+  // ── 1. Build MongoDB query from filters ──────────────────────────────────
   const query = {};
 
-  // Price filter
   if (filters.minPrice || filters.maxPrice) {
     query.basePricePerNight = {};
-    if (filters.minPrice) {
-      query.basePricePerNight.$gte = filters.minPrice;
-    }
-    if (filters.maxPrice) {
-      query.basePricePerNight.$lte = filters.maxPrice;
-    }
+    if (filters.minPrice) query.basePricePerNight.$gte = filters.minPrice;
+    if (filters.maxPrice) query.basePricePerNight.$lte = filters.maxPrice;
   }
 
-  // Bedrooms filter
   if (filters.bedrooms > 0) {
     query.bedrooms = { $gte: filters.bedrooms };
   }
 
-  // Property type filter
   if (filters.propertyType.length > 0) {
     query.propertyType = { $in: filters.propertyType };
   }
 
-  // Location filter
   if (filters.location.length > 0) {
     query['location.area'] = { $in: filters.location };
   }
 
-  // Amenities filter (must have ALL selected amenities)
   if (filters.amenities.length > 0) {
     query.amenities = { $all: filters.amenities };
   }
 
-  // Guest capacity filter (total guests)
   const totalGuests = filters.adults + filters.children + filters.infants;
   if (totalGuests > 0) {
-    // Assuming your Property model has a maxGuests field
     query.maxGuests = { $gte: totalGuests };
   }
 
-  // Date range info (for display purposes - not used in query unless you have booking system)
-  const checkIn = params.checkIn || '';
-  const checkOut = params.checkOut || '';
+  // ── 2. Exclude properties booked for the selected date range ─────────────
+  //    A property is unavailable if ANY active booking overlaps:
+  //    existing.check_in < requested checkOut  AND
+  //    existing.check_out > requested checkIn
+  let bookedPropertyIds = [];
 
-  // Log query for debugging (remove in production)
-  console.log('MongoDB Query:', JSON.stringify(query, null, 2));
-  console.log('Filters:', filters);
-  console.log('Check-in:', checkIn, 'Check-out:', checkOut);
+  if (checkIn && checkOut) {
+    const checkInDate  = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
 
-  const skip = (page - 1) * pageSize;
+    if (checkInDate < checkOutDate) {
+      const bookedBookings = await Booking.find({
+        status: { $nin: ['cancelled'] },
+        check_in:  { $lt: checkOutDate },
+        check_out: { $gt: checkInDate },
+      }).select('property');
 
+      bookedPropertyIds = bookedBookings.map((b) => b.property);
+
+      if (bookedPropertyIds.length > 0) {
+        query._id = { $nin: bookedPropertyIds };
+      }
+    }
+  }
+
+  // ── 3. Paginate ──────────────────────────────────────────────────────────
+  const skip  = (page - 1) * pageSize;
   const total = await Property.countDocuments(query);
+
   const properties = await Property.find(query)
     .skip(skip)
     .limit(pageSize)
     .lean();
 
-  // Serialize properties for client
+  // ── 4. Serialize for client ──────────────────────────────────────────────
   const serializedProperties = properties.map((property) => ({
     ...property,
-    _id: property._id.toString(),
-    owner: property.owner.toString(),
+    _id:       property._id.toString(),
+    owner:     property.owner.toString(),
     createdAt: property.createdAt.toISOString(),
     updatedAt: property.updatedAt.toISOString(),
   }));
+
+  const hasDateSearch = Boolean(checkIn && checkOut);
 
   return (
     <section className='min-h-screen bg-gray-50'>
@@ -100,6 +114,7 @@ const PropertiesPage = async ({ searchParams }) => {
         {/* Main Content */}
         <main className='flex-1 p-4 lg:p-8'>
           <div className='max-w-7xl mx-auto'>
+
             {/* Header */}
             <div className='mb-6'>
               <h1 className='text-3xl font-bold text-gray-900 mb-2'>
@@ -108,9 +123,9 @@ const PropertiesPage = async ({ searchParams }) => {
                   ({total} {total === 1 ? 'property' : 'properties'})
                 </span>
               </h1>
-              
-              {/* Search Info Display */}
-              {(checkIn || checkOut || totalGuests > 0) && (
+
+              {/* Active search chips */}
+              {(checkIn || checkOut || totalGuests > 1) && (
                 <div className='mt-3 flex flex-wrap gap-2'>
                   {checkIn && (
                     <span className='inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800'>
@@ -127,14 +142,22 @@ const PropertiesPage = async ({ searchParams }) => {
                       {totalGuests} {totalGuests === 1 ? 'Guest' : 'Guests'}
                     </span>
                   )}
+                  {/* Let the user know we filtered by dates */}
+                  {hasDateSearch && bookedPropertyIds.length > 0 && (
+                    <span className='inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800'>
+                      ✓ Showing only available properties
+                    </span>
+                  )}
                 </div>
               )}
-              
-            
             </div>
 
             {/* Property List */}
-            <PropertyList properties={serializedProperties} />
+            <PropertyList
+              properties={serializedProperties}
+              checkIn={checkIn}
+              checkOut={checkOut}
+            />
 
             {/* Pagination */}
             {total > 0 && (

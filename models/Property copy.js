@@ -7,6 +7,7 @@ const PropertySchema = new Schema(
       ref: 'User',
       required: true,
     },
+
     name: {
       type: String,
       required: true,
@@ -17,6 +18,11 @@ const PropertySchema = new Schema(
     },
     description: {
       type: String,
+    },
+    availability: {
+      blocked_dates: [{ type: Date }], 
+      min_stay: { type: Number, default: 1 },
+      max_stay: { type: Number, default: 30 },
     },
     location: {
       street: {
@@ -83,7 +89,11 @@ const PropertySchema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
+
+
+
+
 );
 
 const Property = models.Property || model('Property', PropertySchema);
